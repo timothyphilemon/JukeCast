@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Login — JukeCast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow-x: hidden; }
+:root {
+  --page: #f5f5f7;
+  --black: #1d1d1f;
+  --mid: #6e6e73;
+  --light: #d2d2d7;
+  --purple: #5847ed;
+  --f: 'Instrument Sans', sans-serif;
+}
+body {
+  font-family: var(--f);
+  background: var(--page);
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  display: flex; align-items: center;
+  padding: 0 6%; height: 52px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.nav-logo {
+  font-family: "DM Sans", sans-serif; font-size: 22px; font-weight: 300;
+  letter-spacing: 0.02em; color: var(--black); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.login-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 72px 20px 40px; min-height: 100vh;
+}
+.login-card {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 24px; padding: 48px 40px;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.login-card h1 {
+  font-size: 26px; font-weight: 600; letter-spacing: -0.02em;
+  margin-bottom: 8px; text-align: center;
+}
+.login-card .subtitle {
+  font-size: 15px; color: var(--mid); margin-bottom: 28px; text-align: center;
+}
+
+/* Google button */
+.btn-google {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--f); font-size: 15px; font-weight: 600; color: var(--black);
+  background: #fff; border: 1.5px solid var(--light);
+  border-radius: 980px; padding: 13px 20px; cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, transform .1s;
+  margin-bottom: 20px;
+}
+.btn-google:hover { border-color: #999; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.btn-google:active { transform: scale(0.98); }
+.btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px; color: var(--mid); font-size: 13px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--light);
+}
+
+/* Email/password fields */
+.input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.input-group input {
+  font-family: var(--f); font-size: 15px; padding: 13px 16px;
+  border: 1.5px solid var(--light); border-radius: 12px; outline: none;
+  color: var(--black); background: var(--page);
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.input-group input:focus {
+  border-color: var(--purple); background: #fff;
+  box-shadow: 0 0 0 3px rgba(88,71,237,0.1);
+}
+.input-group input::placeholder { color: var(--mid); }
+
+/* Login button */
+.btn-login {
+  width: 100%; background: var(--purple); color: #fff;
+  font-family: var(--f); font-size: 15px; font-weight: 600;
+  padding: 13px; border-radius: 980px; border: none; cursor: pointer;
+  transition: background .2s, transform .1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-login:hover:not(:disabled) { background: #4636d4; }
+.btn-login:active:not(:disabled) { transform: scale(0.98); }
+.btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+.spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .6s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Footer links */
+.login-links {
+  margin-top: 18px; display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--mid);
+}
+.login-links a { color: var(--purple); text-decoration: none; }
+.login-links a:hover { text-decoration: underline; }
+
+/* Error / success */
+.msg {
+  border-radius: 10px; padding: 11px 14px; font-size: 13px;
+  margin-bottom: 16px; display: none;
+}
+.msg.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+.msg.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="images/8NBch2A.png" alt="" style="height:20px;display:block;">
+    jukecast
+  </a>
+</nav>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>Sign in to your account</h1>
+
+
+    <div class="msg" id="msgBox"></div>
+
+    <!-- Google -->
+    <button class="btn-google" id="googleBtn" onclick="handleGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="divider">or</div>
+
+    <!-- Email / Password -->
+    <div class="input-group">
+      <input type="email" id="emailInput" placeholder="Email address" autocomplete="email">
+      <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="handleEmailLogin()">
+      <span class="spinner" id="spinner"></span>
+      <span id="loginBtnText">Log In</span>
+    </button>
+
+    <div class="login-links">
+      <a href="#" onclick="handleForgotPassword(); return false;">Forgot password?</a>
+      <a href="signup.html">Create account</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ─── PASTE YOUR FIREBASE CONFIG HERE ────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDrhNvQ-7LqZVlxMfRE_q0oryaHGCJNiDU",
+    authDomain:        "barplaymyp.firebaseapp.com",
+    databaseURL:       "https://barplaymyp-default-rtdb.firebaseio.com",
+    projectId:         "barplaymyp",
+    storageBucket:     "barplaymyp.firebasestorage.app",
+    messagingSenderId: "1071259901423",
+    appId:             "1:1071259901423:web:fbe7a0257a5ac6ad15aa1a",
+  }
+  // ────────────────────────────────────────────────────────────────────────────
+
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged,
+           signInWithEmailAndPassword, createUserWithEmailAndPassword,
+           sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'
+
+  const app      = initializeApp(firebaseConfig)
+  const auth     = getAuth(app)
+  const provider = new GoogleAuthProvider()
+
+  // Already logged in → skip to admin
+  onAuthStateChanged(auth, user => {
+    if (user) window.location.href = 'admin.html'
+  })
+
+  const msgBox       = document.getElementById('msgBox')
+  const emailInput   = document.getElementById('emailInput')
+  const passwordInput = document.getElementById('passwordInput')
+  const loginBtn     = document.getElementById('loginBtn')
+  const spinner      = document.getElementById('spinner')
+  const loginBtnText = document.getElementById('loginBtnText')
+
+  function showMsg(text, type = 'error') {
+    msgBox.textContent = text
+    msgBox.className   = `msg ${type}`
+    msgBox.style.display = 'block'
+  }
+  function clearMsg() { msgBox.style.display = 'none' }
+
+  function setLoading(on) {
+    loginBtn.disabled        = on
+    spinner.style.display    = on ? 'block' : 'none'
+    loginBtnText.textContent = on ? 'Logging in...' : 'Log In'
+  }
+
+  const FRIENDLY = {
+    'auth/user-not-found':        'No account found with that email.',
+    'auth/wrong-password':        'Incorrect password. Please try again.',
+    'auth/invalid-email':         'Please enter a valid email address.',
+    'auth/too-many-requests':     'Too many attempts. Try again later.',
+    'auth/invalid-credential':    'Invalid email or password.',
+    'auth/email-already-in-use':  'An account with that email already exists.',
+    'auth/weak-password':         'Password must be at least 6 characters.',
+    'auth/popup-closed-by-user':  'Sign-in cancelled.',
+    'auth/popup-blocked':         'Popup blocked — allow popups for this site and try again.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+  }
+
+  // ── Google ──
+  window.handleGoogleLogin = async function() {
+    clearMsg()
+    document.getElementById('googleBtn').disabled = true
+    try {
+      await signInWithPopup(auth, provider)
+      window.location.href = 'admin.html'
+    } catch (err) {
+      showMsg(FRIENDLY[err.code] || `Sign-in failed: ${err.message}`)
+      document.getElementById('googleBtn').disabled = false
+    }
+  }
+
+  // ── Email / Password ──
+  window.handleEmailLogin = async function() {
+    clearMsg()
+    const email    = emailInput.value.trim()
+    const password = passwordInput.value
+    if (!email || !password) { showMsg('Please enter your email and password.'); return }
+    setLoading(true)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      window.location.href = 'admin.html'
+    } catch (err) {
+      showMsg(FRIENDLY[err.code] || `Login failed: ${err.message}`)
+    } finally { setLoading(false) }
+  }
+
+  // ── Create account ──
+  window.handleSignUp = async function() {
+    clearMsg()
+    const email    = emailInput.value.trim()
+    const password = passwordInput.value
+    if (!email) { emailInput.focus(); return }
+    if (!password) { passwordInput.focus(); return }
+    setLoading(true)
+    loginBtnText.textContent = 'Creating account...'
+    try {
+      await createUserWithEmailAndPassword(auth, email, password)
+      window.location.href = 'admin.html'
+    } catch (err) {
+      showMsg(FRIENDLY[err.code] || `Sign-up failed: ${err.message}`)
+    } finally { setLoading(false) }
+  }
+
+  // ── Forgot password ──
+  window.handleForgotPassword = async function() {
+    clearMsg()
+    const email = emailInput.value.trim()
+    if (!email) { showMsg('Enter your email address above first.'); return }
+    try {
+      await sendPasswordResetEmail(auth, email)
+      showMsg(`Reset link sent to ${email}`, 'success')
+    } catch (err) {
+      showMsg(FRIENDLY[err.code] || 'Could not send reset email.')
+    }
+  }
+
+  // Enter key submits
+  passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleEmailLogin() })
+  emailInput.addEventListener('keydown',    e => { if (e.key === 'Enter') passwordInput.focus() })
+</script>
+
+</body>
+</html>
