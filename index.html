@@ -271,14 +271,6 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
   footer * { white-space: normal !important; }
 }
 
-/* Fluid image scaling — shrink with viewport */
-.hero-right-img {
-  width: auto !important;
-}
-.desc-overlay-img {
-  height: clamp(400px, 65vw, 1040px) !important;
-  width: clamp(400px, 65vw, 1040px) !important;
-}
 
 @media (max-width: 1500px) and (min-width: 900px) {
   .compat-row { gap: 16px !important; }
@@ -290,7 +282,6 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
   .compat-row img[alt="Atmosphere TV"] { height: 13px !important; }
 }
 @media (max-width: 600px) {
-  .desc-overlay-img { display: none !important; }
 }
 
 /* ── TABLET (iPad portrait + landscape) ── */
@@ -331,36 +322,14 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
   </div>
 </nav>
 
-<!-- HERO IMAGE - outside all wrappers to avoid clip-path clipping -->
-<img src="images/jPAf40m.png" alt="" id="hero-img" class="hero-right-img" style="position:absolute;width:auto;object-fit:contain;z-index:50;pointer-events:none;display:none;">
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var img = document.getElementById('hero-img');
-  if (!img) return;
-  function position() {
-    var w = window.innerWidth;
-    if (w < 600) { img.style.display='none'; return; }
-    if (w < 1025) { img.style.display='none'; return; }
-    img.style.display='block';
-    if (false) {
-      var t = Math.min(1, Math.max(0, (w-1470)/(1920-1470)));
-      img.style.height = Math.round(510+(580-510)*t)+'px';
-      img.style.left   = Math.round(639+(845-639)*t)+'px';
-      img.style.top    = Math.round(58+(0-58)*t)+'px';
-    }
-  }
-  position();
-  window.addEventListener('resize', position);
-});
-</script>
+
 
 
 
 <!-- HERO + DESCRIPTION WRAPPER -->
 <div style="position:relative;">
 
-  <img src="images/I6YPUme.png" id="desc-img" alt="" class="desc-overlay-img" style="position:absolute;object-fit:contain;z-index:1500;pointer-events:none;display:none;-webkit-mask-image:linear-gradient(to right, black 70%, transparent 95%);mask-image:linear-gradient(to right, black 70%, transparent 95%);">
 <!-- HERO -->
 <div class="hero" style="position:relative;overflow:hidden;">
   <div class="hero-orb" style="width:400px;height:400px;background:#7c3aed;top:-100px;left:-80px;"></div>
@@ -700,26 +669,5 @@ function faq(el) {
 }
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var img = document.getElementById('desc-img');
-  if (!img) return;
-  function position() {
-    var w = window.innerWidth;
-    if (w < 600) { img.style.display = 'none'; return; }
-    if (w < 1025) { img.style.display = 'none'; return; }
-    img.style.display = 'block';
-    img.style.bottom = 'auto';
-    if (false) {
-      img.style.width  = '700px';
-      img.style.height = '700px';
-      var t = Math.min(1, Math.max(0, (w - 1470) / (1920 - 1470)));
-      img.style.left = Math.round(-148 + (-41 - -148) * t) + 'px';
-      img.style.top  = Math.round(258  + (202  - 258)  * t) + 'px';
-    }
-  }
-  position();
-  window.addEventListener('resize', position);
-});
-</script>
+
 
