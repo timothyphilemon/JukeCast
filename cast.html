@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JukeCast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
+:root {
+  --purple: #7c3aed;
+  --purple-light: rgba(124,58,237,0.1);
+  --page: #e8e8e8;
+  --card: #f5f5f5;
+  --white: #ffffff;
+  --black: #111111;
+  --mid: #888888;
+  --light: #dddddd;
+  --f: 'Instrument Sans', sans-serif;
+}
+body {
+  font-family: var(--f);
+  background: var(--page);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── STATES ── */
+.state { display: none; width: 100%; max-width: 440px; }
+.state.active { display: block; }
+
+/* ── ENTRY SCREEN ── */
+.entry-card {
+  background: var(--card); border-radius: 16px;
+  padding: 40px 32px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.logo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.logo-text { font-weight: 300; letter-spacing: 0.02em; font-size: 22px; color: var(--black); }
+.tagline { color: var(--mid); font-size: 14px; margin-bottom: 32px; }
+.entry-label { display: block; font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 6px; }
+.entry-hint { font-size: 13px; color: var(--mid); margin-bottom: 14px; }
+.session-input-big {
+  display: block; width: 100%; padding: 14px;
+  font-family: var(--f); font-size: 28px; font-weight: 700;
+  letter-spacing: 0.2em; text-align: center; color: var(--black);
+  background: var(--white); border: 1.5px solid var(--light);
+  border-radius: 10px; outline: none; margin-bottom: 8px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.session-input-big:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-light); }
+.session-input-big::placeholder { font-size: 18px; font-weight: 400; letter-spacing: 0.06em; color: #ccc; }
+.btn-connect {
+  width: 100%; background: var(--purple); color: var(--white);
+  font-family: var(--f); font-size: 15px; font-weight: 600;
+  padding: 14px; border-radius: 980px; border: none; cursor: pointer;
+  transition: background .2s; margin-top: 4px;
+}
+.btn-connect:hover { background: #6d28d9; }
+.btn-connect:disabled { opacity: 0.45; cursor: not-allowed; }
+.entry-error { font-size: 13px; color: #ef4444; text-align: center; margin-top: 10px; display: none; }
+
+/* ── MAIN CAST UI ── */
+.cast-card {
+  background: var(--card); border-radius: 16px;
+  padding: 32px 28px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.cast-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.session-badge {
+  font-size: 11px; color: #aaa; font-weight: 600; letter-spacing: 0.08em;
+}
+.cast-sub { color: var(--mid); font-size: 14px; margin-bottom: 22px; }
+.label { display: block; font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 6px; }
+.search-wrap { position: relative; margin-bottom: 4px; }
+.search-input {
+  display: block; width: 100%; padding: 12px 14px;
+  font-family: var(--f); font-size: 15px;
+  border-radius: 8px; border: 1px solid var(--light);
+  background: var(--white); color: var(--black);
+  outline: none; transition: border-color .2s;
+}
+.search-input:focus { border-color: var(--purple); }
+.search-status { position: absolute; right: 14px; top: 14px; font-size: 12px; color: #aaa; }
+.dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 100;
+  background: var(--white); border-radius: 10px; border: 1px solid var(--light);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12); overflow: hidden;
+  margin-top: 4px; max-height: 380px; overflow-y: auto; display: none;
+}
+.dropdown.open { display: block; }
+.drop-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee;
+  transition: background .1s;
+}
+.drop-item:last-child { border-bottom: none; }
+.drop-item:hover { background: #f5f5f5; }
+.drop-thumb { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.drop-title { font-size: 13px; font-weight: 600; color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+.drop-meta { font-size: 11px; color: var(--mid); }
+.input-error { font-size: 13px; color: #ef4444; margin-top: -2px; margin-bottom: 12px; display: none; }
+.selected-card {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--white); border-radius: 10px;
+  padding: 10px; margin: 12px 0; border: 2px solid var(--purple);
+}
+.selected-thumb { width: 80px; height: 45px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.selected-info { flex: 1; min-width: 0; }
+.selected-title { font-size: 13px; font-weight: 600; color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.selected-meta { font-size: 11px; color: var(--mid); margin-top: 2px; }
+.deselect-btn { background: none; border: none; color: #bbb; font-size: 16px; cursor: pointer; padding: 4px 6px; flex-shrink: 0; }
+.btn-row { display: flex; gap: 8px; margin-bottom: 4px; }
+.btn {
+  flex: 1; padding: 11px 8px; font-family: var(--f);
+  font-size: 13px; font-weight: 700; border: none;
+  border-radius: 8px; cursor: pointer; transition: opacity .15s;
+  white-space: nowrap; text-align: center;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--purple); color: var(--white); }
+.btn-secondary { background: #e5e7eb; color: #555; }
+.status-msg { margin-top: 12px; font-size: 14px; text-align: center; display: none; }
+.section { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--light); }
+.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sec-label { font-size: 13px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+.live-badge { font-size: 11px; color: var(--black); font-weight: 700; }
+.thumb-wrap { border-radius: 10px; overflow: hidden; border: 2px solid var(--purple); }
+.thumb-full { width: 100%; display: block; }
+.now-title { font-size: 13px; font-weight: 600; color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 8px; }
+.now-meta { font-size: 11px; color: var(--mid); margin-top: 2px; }
+.play-queue-btn {
+  background: var(--purple); color: var(--white); border: none;
+  border-radius: 6px; padding: 7px 14px; font-family: var(--f);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.q-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--white); border-radius: 8px;
+  padding: 8px 10px; margin-bottom: 8px; margin-top: 10px;
+}
+.q-thumb { width: 64px; height: 36px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.q-title { font-size: 13px; font-weight: 600; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.q-meta { font-size: 11px; color: #666; }
+.remove-btn { background: none; border: none; color: #bbb; font-size: 16px; cursor: pointer; padding: 4px 6px; flex-shrink: 0; }
+.clear-corner {
+  position: fixed; bottom: 16px; right: 16px;
+  background: rgba(0,0,0,0.06); border-radius: 8px; padding: 6px 10px;
+}
+.clear-btn {
+  background: none; border: 1px solid var(--light); border-radius: 6px;
+  padding: 4px 8px; font-size: 11px; color: #999; cursor: pointer; font-family: var(--f);
+}
+
+/* ── LOADING / ERROR SCREENS ── */
+.center-screen {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; text-align: center; gap: 12px;
+}
+.spinner-ring {
+  width: 32px; height: 32px;
+  border: 3px solid rgba(124,58,237,0.2);
+  border-top-color: var(--purple);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-icon { font-size: 36px; margin-bottom: 4px; }
+.error-title { font-size: 16px; font-weight: 600; color: var(--black); }
+.error-sub { font-size: 14px; color: var(--mid); max-width: 280px; }
+.retry-btn {
+  margin-top: 8px; background: var(--purple); color: var(--white);
+  font-family: var(--f); font-size: 14px; font-weight: 600;
+  padding: 10px 24px; border-radius: 980px; border: none; cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- ENTRY: no session in URL -->
+<div class="state" id="stateEntry">
+  <div class="entry-card">
+    <div class="logo-row">
+      <img src="images/8NBch2A.png" alt="" style="height:26px;">
+      <span class="logo-text">JukeCast</span>
+    </div>
+    <p class="tagline">Take over the TV</p>
+    <label class="entry-label">Enter Session ID</label>
+    <p class="entry-hint">Find the 6-digit code on the screen or ask your bartender.</p>
+    <input class="session-input-big" id="entryInput" type="text" inputmode="numeric"
+           maxlength="6" placeholder="000000" autocomplete="off">
+    <button class="btn-connect" id="entryBtn" onclick="connectSession()" disabled>Connect</button>
+    <div class="entry-error" id="entryError"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="state" id="stateLoading">
+  <div class="center-screen">
+    <div class="spinner-ring"></div>
+    <p style="font-size:14px;color:var(--mid);">Connecting...</p>
+  </div>
+</div>
+
+<!-- INVALID SESSION -->
+<div class="state" id="stateInvalid">
+  <div class="center-screen">
+    <div class="error-icon">🎵</div>
+    <p class="error-title">Session not found</p>
+    <p class="error-sub" id="invalidMsg">That session ID doesn't exist. Check the screen or ask your bartender.</p>
+    <button class="retry-btn" onclick="goBack()">Try Another Code</button>
+  </div>
+</div>
+
+<!-- MAIN CASTING UI -->
+<div class="state" id="stateCast">
+  <div class="cast-card">
+    <div class="cast-header">
+      <div class="logo-row">
+        <img src="images/8NBch2A.png" alt="" style="height:26px;">
+        <span class="logo-text">JukeCast</span>
+      </div>
+      <span class="session-badge" id="sessionBadge"></span>
+    </div>
+    <p class="cast-sub">Take over the TV</p>
+
+    <label class="label">Search or paste a YouTube link</label>
+    <div class="search-wrap">
+      <input class="search-input" id="searchInput" type="text"
+             placeholder="Search for a song or paste a link..."
+             autocomplete="off" oninput="handleSearchInput(this.value)">
+      <span class="search-status" id="searchStatus"></span>
+      <div class="dropdown" id="dropdown"></div>
+    </div>
+    <div class="input-error" id="inputError"></div>
+
+    <div class="selected-card" id="selectedCard" style="display:none;">
+      <img class="selected-thumb" id="selectedThumb" src="" alt="">
+      <div class="selected-info">
+        <div class="selected-title" id="selectedTitle"></div>
+        <div class="selected-meta" id="selectedMeta"></div>
+      </div>
+      <button class="deselect-btn" onclick="clearSelected()">✕</button>
+    </div>
+
+    <div class="btn-row" id="actionBtns" style="display:none;">
+      <button class="btn btn-primary"   id="btnPlayNow"        onclick="handlePlayNow()"        style="display:none;">Play Now</button>
+      <button class="btn btn-secondary" id="btnCreatePlaylist" onclick="handleCreatePlaylist()" style="display:none;">Playlist</button>
+      <button class="btn btn-primary"   id="btnAddToPlaylist"  onclick="handleAddToPlaylist()"  style="display:none;">Add to Playlist</button>
+    </div>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="section" id="nowPlayingSection" style="display:none;">
+      <div class="sec-header">
+        <span class="sec-label">Now Playing</span>
+        <span class="live-badge">● LIVE ON TV</span>
+      </div>
+      <div class="thumb-wrap">
+        <img class="thumb-full" id="npThumb" src="" alt="">
+      </div>
+      <div class="now-title" id="npTitle"></div>
+      <div class="now-meta" id="npMeta"></div>
+    </div>
+
+    <div class="section" id="playlistSection" style="display:none;">
+      <div class="sec-header">
+        <span class="sec-label" id="playlistLabel">Playlist</span>
+        <button class="play-queue-btn" id="playQueueBtn" onclick="handlePlayPlaylist()" style="display:none;">Play Playlist</button>
+      </div>
+      <div id="playlistItems"></div>
+    </div>
+  </div>
+
+  <div class="clear-corner" id="clearCorner" style="display:none;">
+    <button class="clear-btn" onclick="handleClearAll()">Clear all</button>
+  </div>
+</div>
+
+<script type="module">
+  // ─── CONFIG ────────────────────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDrhNvQ-7LqZVlxMfRE_q0oryaHGCJNiDU",
+    authDomain:        "barplaymyp.firebaseapp.com",
+    databaseURL:       "https://barplaymyp-default-rtdb.firebaseio.com",
+    projectId:         "barplaymyp",
+    storageBucket:     "barplaymyp.firebasestorage.app",
+    messagingSenderId: "1071259901423",
+    appId:             "1:1071259901423:web:fbe7a0257a5ac6ad15aa1a",
+  }
+
+  // ─── PASTE YOUR YOUTUBE API KEY(S) HERE ────────────────────────────────────
+  const YOUTUBE_KEYS = [
+    'AIzaSyAvHqMjl0ApvwMz1jnB1JG9t0SA5B7WNLE',
+    'AIzaSyBEdvBEmZLUtf6l8BzaGR92oA3PU1D95gw',
+  ].filter(k => k && !k.startsWith('YOUR'))
+
+  import { initializeApp }                              from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'
+  import { getDatabase, ref, set, push, remove, get,
+           onValue }                                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js'
+
+  const fbApp = initializeApp(firebaseConfig)
+  const db    = getDatabase(fbApp)
+
+  // ── STATE ──
+  let sid          = ''
+  let selected     = null
+  let nowPlaying   = null
+  let playlist     = []
+  let tvIpAddress  = ''
+  let debounceTimer = null
+  let unsubscribers = []
+
+  // ── HELPERS ──
+  function thumb(id) { return `https://img.youtube.com/vi/${id}/hqdefault.jpg` }
+
+  function formatDuration(s) {
+    if (!s) return ''
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60
+    if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+    return `${m}:${String(sec).padStart(2,'0')}`
+  }
+
+  function parseISO8601Duration(d) {
+    const m = d.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+    if (!m) return 0
+    return (parseInt(m[1]||0)*3600) + (parseInt(m[2]||0)*60) + parseInt(m[3]||0)
+  }
+
+  function isYouTubeUrl(val) { return val.includes('youtube.com/') || val.includes('youtu.be/') }
+
+  function extractVideoId(url) {
+    try {
+      const u = new URL(url)
+      if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0]
+      if (u.pathname.startsWith('/shorts/')) return u.pathname.split('/shorts/')[1].split('?')[0]
+      return u.searchParams.get('v')
+    } catch { return null }
+  }
+
+  async function fetchWithFallback(buildUrl) {
+    if (!YOUTUBE_KEYS.length) throw new Error('No YouTube API key configured.')
+    let lastErr
+    for (const key of YOUTUBE_KEYS) {
+      const res = await fetch(buildUrl(key))
+      if (res.ok) return res.json()
+      if (res.status === 403) { lastErr = 403; continue }
+      throw new Error(`YouTube API ${res.status}`)
+    }
+    throw new Error(`All keys exhausted (${lastErr})`)
+  }
+
+  async function searchYouTube(query) {
+    const sData = await fetchWithFallback(
+      key => `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=6&q=${encodeURIComponent(query)}&key=${key}`
+    )
+    if (!sData.items?.length) return []
+    const ids = sData.items.map(i => i.id.videoId).join(',')
+    const dData = await fetchWithFallback(
+      key => `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ids}&key=${key}`
+    )
+    const durs = {}
+    dData.items?.forEach(i => { durs[i.id] = parseISO8601Duration(i.contentDetails.duration) })
+    return sData.items.map(i => ({
+      id:        i.id.videoId,
+      title:     i.snippet.title,
+      channel:   i.snippet.channelTitle,
+      thumbnail: i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url,
+      duration:  durs[i.id.videoId] || 0,
+    }))
+  }
+
+  async function fetchVideoById(videoId) {
+    const data = await fetchWithFallback(
+      key => `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${key}`
+    )
+    const item = data.items?.[0]
+    if (!item) return null
+    return {
+      id:        item.id,
+      title:     item.snippet.title,
+      channel:   item.snippet.channelTitle,
+      thumbnail: item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url,
+      duration:  parseISO8601Duration(item.contentDetails.duration),
+    }
+  }
+
+  async function pingWakeServer() {
+    if (!tvIpAddress) return
+    try {
+      const ctrl = new AbortController()
+      setTimeout(() => ctrl.abort(), 2000)
+      await fetch(`http://${tvIpAddress}:8080/wake`, { signal: ctrl.signal, mode: 'no-cors' })
+    } catch(e) { console.warn('[Wake] ping failed:', e.message) }
+  }
+
+  // ── SHOW STATE ──
+  function showState(name) {
+    document.querySelectorAll('.state').forEach(s => s.classList.remove('active'))
+    document.getElementById('state' + name).classList.add('active')
+  }
+
+  // ── ENTRY INPUT ──
+  const entryInput = document.getElementById('entryInput')
+  const entryBtn   = document.getElementById('entryBtn')
+  const entryError = document.getElementById('entryError')
+
+  entryInput.addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g,'').slice(0,6)
+    entryBtn.disabled = e.target.value.length !== 6
+    entryError.style.display = 'none'
+  })
+  entryInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !entryBtn.disabled) connectSession() })
+
+  window.connectSession = async function() {
+    const id = entryInput.value.trim()
+    if (id.length !== 6) return
+    entryBtn.disabled = true
+    entryError.style.display = 'none'
+    showState('Loading')
+    try {
+      const snap = await get(ref(db, `sessions/${id}`))
+      if (!snap.exists()) {
+        document.getElementById('invalidMsg').textContent = `Session "${id}" not found. Check the screen or ask your bartender.`
+        showState('Invalid')
+        return
+      }
+      loadSession(id)
+    } catch(e) {
+      entryError.textContent = 'Connection error. Check your network.'
+      entryError.style.display = 'block'
+      entryBtn.disabled = false
+      showState('Entry')
+    }
+  }
+
+  window.goBack = function() {
+    entryInput.value = ''
+    entryBtn.disabled = true
+    showState('Entry')
+    const url = new URL(window.location.href)
+    url.searchParams.delete('session')
+    window.history.replaceState(null, '', url.toString())
+  }
+
+  // ── LOAD SESSION ──
+  function loadSession(id) {
+    // Unsubscribe any previous listeners
+    unsubscribers.forEach(u => u())
+    unsubscribers = []
+
+    sid = id
+    document.getElementById('sessionBadge').textContent = '#' + id
+
+    // Update URL
+    const url = new URL(window.location.href)
+    url.searchParams.set('session', id)
+    window.history.replaceState(null, '', url.toString())
+
+    // Listen to queue
+    unsubscribers.push(onValue(ref(db, `sessions/${sid}/queue`), snap => {
+      const val = snap.val()
+      playlist = val
+        ? Object.entries(val).map(([key, data]) => ({ key, ...(typeof data === 'string' ? {id:data,title:data} : data) }))
+        : []
+      renderPlaylist()
+      updateActionButtons()
+    }))
+
+    // Listen to nowPlaying
+    unsubscribers.push(onValue(ref(db, `sessions/${sid}/nowPlaying`), snap => {
+      const val = snap.val()
+      nowPlaying = val && typeof val === 'object' ? val : null
+      renderNowPlaying()
+      updateActionButtons()
+    }))
+
+    // Listen to TV IP for wake server
+    unsubscribers.push(onValue(ref(db, `sessions/${sid}/settings/tvIpAddress`), snap => {
+      tvIpAddress = snap.val() || ''
+    }))
+
+    showState('Cast')
+  }
+
+  // ── SEARCH ──
+  window.handleSearchInput = function(val) {
+    clearTimeout(debounceTimer)
+    setInputError(null)
+
+    if (!val.trim() || val.length < 2) {
+      closeDropdown()
+      document.getElementById('searchStatus').textContent = ''
+      return
+    }
+
+    if (isYouTubeUrl(val.trim())) {
+      const videoId = extractVideoId(val.trim())
+      if (!videoId) { setInputError('Could not find video in that link.'); return }
+      document.getElementById('searchStatus').textContent = 'Loading...'
+      fetchVideoById(videoId)
+        .then(video => {
+          if (video) { selectVideo(video); document.getElementById('searchInput').value = '' }
+          else setInputError('Video not found.')
+        })
+        .catch(() => setInputError('Could not load video.'))
+        .finally(() => document.getElementById('searchStatus').textContent = '')
+      return
+    }
+
+    document.getElementById('searchStatus').textContent = 'Searching...'
+    debounceTimer = setTimeout(async () => {
+      try {
+        const results = await searchYouTube(val)
+        renderDropdown(results)
+      } catch(e) {
+        console.error(e)
+        closeDropdown()
+      } finally {
+        document.getElementById('searchStatus').textContent = ''
+      }
+    }, 600)
+  }
+
+  function renderDropdown(results) {
+    const dd = document.getElementById('dropdown')
+    if (!results.length) { closeDropdown(); return }
+    dd.innerHTML = results.map(v => `
+      <div class="drop-item" onclick="selectVideoById('${v.id}','${escHtml(v.title)}','${escHtml(v.channel||'')}','${v.thumbnail||''}',${v.duration||0})">
+        <img class="drop-thumb" src="${v.thumbnail || thumb(v.id)}" alt="">
+        <div style="flex:1;min-width:0;">
+          <div class="drop-title">${escHtml(v.title)}</div>
+          <div class="drop-meta">${escHtml(v.channel||'')}${v.duration ? ' · ' + formatDuration(v.duration) : ''}</div>
+        </div>
+      </div>
+    `).join('')
+    dd.classList.add('open')
+  }
+
+  function closeDropdown() { document.getElementById('dropdown').classList.remove('open') }
+
+  window.selectVideoById = function(id, title, channel, thumbnail, duration) {
+    selectVideo({ id, title, channel, thumbnail, duration })
+    document.getElementById('searchInput').value = ''
+    closeDropdown()
+  }
+
+  function selectVideo(video) {
+    selected = video
+    document.getElementById('selectedCard').style.display = 'flex'
+    document.getElementById('selectedThumb').src = video.thumbnail || thumb(video.id)
+    document.getElementById('selectedTitle').textContent = video.title
+    document.getElementById('selectedMeta').textContent = (video.channel || '') + (video.duration ? ' · ' + formatDuration(video.duration) : '')
+    setStatus(null)
+    updateActionButtons()
+  }
+
+  window.clearSelected = function() {
+    selected = null
+    document.getElementById('selectedCard').style.display = 'none'
+    updateActionButtons()
+  }
+
+  function setInputError(msg) {
+    const el = document.getElementById('inputError')
+    el.textContent = msg || ''
+    el.style.display = msg ? 'block' : 'none'
+  }
+
+  function setStatus(msg, ok) {
+    const el = document.getElementById('statusMsg')
+    if (!msg) { el.style.display = 'none'; return }
+    el.textContent = msg
+    el.style.color = ok ? 'var(--purple)' : '#ef4444'
+    el.style.display = 'block'
+  }
+
+  function escHtml(str) {
+    if (!str) return ''
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))
+  }
+
+  // ── ACTION BUTTONS ──
+  function updateActionButtons() {
+    const isPlaying   = !!nowPlaying
+    const hasPlaylist = playlist.length > 0
+    const hasSelected = !!selected
+
+    document.getElementById('actionBtns').style.display = hasSelected ? 'flex' : 'none'
+    document.getElementById('btnPlayNow').style.display        = hasSelected && !isPlaying && !hasPlaylist ? 'flex' : 'none'
+    document.getElementById('btnCreatePlaylist').style.display = hasSelected && !isPlaying && !hasPlaylist ? 'flex' : 'none'
+    document.getElementById('btnAddToPlaylist').style.display  = hasSelected && (isPlaying || hasPlaylist) ? 'flex' : 'none'
+
+    document.getElementById('clearCorner').style.display = (isPlaying || hasPlaylist) ? 'block' : 'none'
+  }
+
+  window.handlePlayNow = async function() {
+    if (!selected) return
+    try {
+      await pingWakeServer()
+      await set(ref(db, `sessions/${sid}/nowPlaying`), { ...selected, handled: false, addedAt: Date.now() })
+      setStatus('Playing now!', true)
+      clearSelected()
+    } catch(e) { setStatus('Error: ' + e.message, false) }
+  }
+
+  window.handleCreatePlaylist = async function() {
+    if (!selected) return
+    try {
+      await push(ref(db, `sessions/${sid}/queue`), { ...selected, addedAt: Date.now() })
+      setStatus('Playlist started!', true)
+      clearSelected()
+    } catch(e) { setStatus('Error: ' + e.message, false) }
+  }
+
+  window.handleAddToPlaylist = async function() {
+    if (!selected) return
+    try {
+      await push(ref(db, `sessions/${sid}/queue`), { ...selected, addedAt: Date.now() })
+      setStatus('Added to playlist!', true)
+      clearSelected()
+    } catch(e) { setStatus('Error: ' + e.message, false) }
+  }
+
+  window.handlePlayPlaylist = async function() {
+    if (!playlist.length) return
+    const first = playlist[0]
+    await set(ref(db, `sessions/${sid}/nowPlaying`), { ...first, handled: false })
+    await remove(ref(db, `sessions/${sid}/queue/${first.key}`))
+  }
+
+  window.handleRemove = async function(key) {
+    await remove(ref(db, `sessions/${sid}/queue/${key}`))
+  }
+
+  window.handleClearAll = async function() {
+    await remove(ref(db, `sessions/${sid}/queue`))
+    await remove(ref(db, `sessions/${sid}/nowPlaying`))
+    clearSelected()
+  }
+
+  // ── RENDER NOW PLAYING ──
+  function renderNowPlaying() {
+    const section = document.getElementById('nowPlayingSection')
+    if (!nowPlaying) { section.style.display = 'none'; return }
+    section.style.display = 'block'
+    document.getElementById('npThumb').src = nowPlaying.thumbnail || thumb(nowPlaying.id)
+    document.getElementById('npTitle').textContent = nowPlaying.title || nowPlaying.id
+    document.getElementById('npMeta').textContent = (nowPlaying.channel || '') + (nowPlaying.duration ? ' · ' + formatDuration(nowPlaying.duration) : '')
+  }
+
+  // ── RENDER PLAYLIST ──
+  function renderPlaylist() {
+    const section  = document.getElementById('playlistSection')
+    const items    = document.getElementById('playlistItems')
+    const playBtn  = document.getElementById('playQueueBtn')
+    const label    = document.getElementById('playlistLabel')
+
+    if (!playlist.length) { section.style.display = 'none'; return }
+    section.style.display = 'block'
+    label.textContent = `Playlist (${playlist.length})`
+    playBtn.style.display = nowPlaying ? 'none' : 'block'
+
+    items.innerHTML = playlist.map((item, i) => `
+      <div class="q-item">
+        <img class="q-thumb" src="${item.thumbnail || thumb(item.id)}" alt="">
+        <div style="flex:1;min-width:0;">
+          <div class="q-title">#${i+1} — ${escHtml(item.title && item.title !== item.id ? item.title : item.id)}</div>
+          ${item.channel ? `<div class="q-meta">${escHtml(item.channel)}${item.duration ? ' · ' + formatDuration(item.duration) : ''}</div>` : ''}
+        </div>
+        <button class="remove-btn" onclick="handleRemove('${item.key}')">✕</button>
+      </div>
+    `).join('')
+  }
+
+  // ── INIT: check URL for session ──
+  const urlSession = new URLSearchParams(window.location.search).get('session')
+  if (urlSession && /^\d{6}$/.test(urlSession)) {
+    showState('Loading')
+    get(ref(db, `sessions/${urlSession}`)).then(snap => {
+      if (snap.exists()) {
+        loadSession(urlSession)
+      } else {
+        document.getElementById('invalidMsg').textContent = `Session "${urlSession}" not found. Check the screen or ask your bartender.`
+        showState('Invalid')
+      }
+    }).catch(() => showState('Entry'))
+  } else {
+    showState('Entry')
+  }
+</script>
+
+</body>
+</html>

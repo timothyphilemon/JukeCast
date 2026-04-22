@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JukeCast</title>
+<link rel="icon" type="image/png" href="images/8NBch2A.png">
+<meta property="og:title" content="JukeCast">
+<meta property="og:description" content="Let customers pay to queue videos on your screens. You stay in control and earn passively.">
+<meta property="og:image" content="images/OIXzalo.png">
+<meta property="og:url" content="https://jukecast.tv">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="images/OIXzalo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; max-width: 100%; }
+:root {
+  --white: #ffffff;
+  --page: #f5f5f7;
+  --black: #1d1d1f;
+  --mid: #6e6e73;
+  --light: #d2d2d7;
+  --blue: #0071e3;
+  --blue-h: #0077ed;
+  --r: 18px;
+  --f: 'Outfit', sans-serif;
+}
+html { scroll-behavior: smooth; background: var(--white); overflow-x: hidden; }
+body { background: var(--white) !important;
+  font-family: var(--f); background: var(--white); color: var(--black);
+  font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; max-width: 100%;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 6%; height: 52px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-logo { font-size: 28px; font-weight: 300; letter-spacing: 0.02em; color: #fff; text-decoration: none; font-family: "DM Sans", "Helvetica Neue", sans-serif; display: flex; align-items: center; gap: 8px; }
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a { font-size: 14px; color: rgba(255,255,255,0.6); text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: #fff; }
+.nav-cta { font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none; }
+.nav-cta:hover { text-decoration: underline; }
+
+/* HERO */
+.hero { padding: 120px 6% 80px; text-align: left; width: 100%; background: linear-gradient(135deg, #1a1040 0%, #2d1060 40%, #1a2060 70%, #0d1a4a 100%); padding-bottom: 140px; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%); position: relative; z-index: 6; }
+.eyebrow-blue { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 20px; display: block; }
+.hero h1 {
+  font-size: 42px; font-weight: 600; line-height: 1.15; color: #ffffff;
+  letter-spacing: -0.02em; margin-bottom: 12px; max-width: 600px;
+}
+.hero-sub {
+  font-size: 19px; font-weight: 400; color: rgba(255,255,255,0.65);
+  max-width: 640px; margin: 0 0 36px; line-height: 1.6;
+}
+.hero-btns { display: flex; gap: 14px; justify-content: flex-start; flex-wrap: wrap; margin-bottom: 0px; }
+.btn-blue {
+  background: #22c55e; color: #fff; font-family: var(--f); font-size: 16px; font-weight: 700;
+  padding: 13px 28px; border-radius: 980px; text-decoration: none; border: none; cursor: pointer; transition: background .2s;
+}
+.btn-blue:hover { background: #16a34a; }
+.btn-outline {
+  background: transparent; color: #ffffff; font-family: var(--f); font-size: 16px; font-weight: 400;
+  padding: 12px 26px; border-radius: 980px; text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,0.35); cursor: pointer; transition: border-color .2s, background .2s;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); }
+
+/* HERO ORBS */
+.hero-orb {
+  position: absolute; border-radius: 50%; z-index: 0;
+  filter: blur(80px); pointer-events: none; opacity: 0.5;
+}
+/* FLOW */
+.flow-wrap { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: start; gap: 16px; width: 100%; }
+.flow-col { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+.flow-label { font-size: 18px; font-weight: 600; color: var(--black); letter-spacing: 0.01em; }
+.flow-arrow { font-size: 20px; color: var(--light); align-self: center; margin-top: 32px; flex-shrink: 0; display: block; }
+.flow-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: var(--r);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 20px 60px rgba(0,0,0,0.05); overflow: hidden;
+}
+
+/* QR */
+.qr-card { padding: 16px; text-align: center; width: 100%; max-width: 160px; }
+.qr-visual {
+  width: 110px; height: 110px; margin: 0 auto 12px; border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 14px; display: grid; grid-template-columns: repeat(7,1fr);
+  grid-template-rows: repeat(7,1fr); gap: 2.5px; padding: 12px;
+  background: var(--white); position: relative; overflow: hidden;
+}
+.q { background: var(--black); border-radius: 1.5px; opacity: 0; }
+.q.on { opacity: 0.7; } .q.hi { opacity: 1; }
+.qr-scan { position: absolute; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, var(--blue), #60a5fa, var(--blue), transparent); animation: scan 2.5s ease-in-out infinite; top: 12px; box-shadow: 0 0 8px rgba(0,113,227,0.8); }
+@keyframes scan { 0%,100%{top:12px} 50%{top:86px} }
+.qr-url { font-size: 12px; color: var(--blue); font-weight: 500; }
+
+/* Phone */
+.phone-card { width: 100%; max-width: 190px; box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 40px 80px rgba(0,0,0,0.06); }
+.phone-top {
+  background: #f9f9fb; padding: 10px 12px 8px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.phone-logo-sm { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.live-badge { display: flex; align-items: center; gap: 5px; background: rgba(52,199,89,0.1); border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: #1a7a33; }
+.live-dot { width: 6px; height: 6px; background: #34c759; border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.phone-search { margin: 8px 10px; background: rgba(0,0,0,0.05); border-radius: 10px; display: flex; align-items: center; gap: 8px; padding: 9px 12px; font-size: 13px; color: var(--mid); }
+.phone-results { padding: 0 10px 10px; }
+.p-result {
+  display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+  align-items: center; animation: fadeUp 0.5s ease both;
+}
+.p-result:last-child { border-bottom: none; }
+.p-result:nth-child(1){animation-delay:.1s} .p-result:nth-child(2){animation-delay:.25s} .p-result:nth-child(3){animation-delay:.4s}
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.p-thumb { width: 50px; height: 32px; border-radius: 8px; flex-shrink: 0; background: var(--page); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.p-meta { flex: 1; min-width: 0; }
+.p-title { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+.p-ch { font-size: 11px; color: var(--mid); }
+.p-btn { font-size: 11px; font-weight: 500; color: var(--blue); background: rgba(0,113,227,0.08); border-radius: 6px; padding: 4px 9px; flex-shrink: 0; white-space: nowrap; }
+
+/* TV card */
+.tv-card { width: 100%; max-width: 240px; box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 40px 80px rgba(0,0,0,0.06); }
+.tv-screen-sm { background: #0a0a0a; aspect-ratio: 16/9; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.tv-bg-emoji { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: 0.12; }
+.tv-warm { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(255,200,50,0.15), transparent 60%); }
+.tv-brand-tag { position: absolute; top: 10px; right: 12px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.4); }
+.tv-q-tag { position: absolute; top: 10px; left: 12px; background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 4px 10px; font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 500; display: flex; align-items: center; gap: 5px; }
+.tv-now { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg,rgba(0,0,0,0.88),transparent); padding: 16px 14px 10px; }
+.tv-now-ey { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.tv-now-title { font-size: 13px; font-weight: 500; color: #fff; }
+.tv-prog { height: 2px; background: rgba(255,255,255,0.15); border-radius: 1px; margin-top: 8px; }
+.tv-prog-fill { height: 100%; background: #fff; border-radius: 1px; width: 38%; animation: prog 10s linear infinite; }
+@keyframes prog { from{width:0} to{width:100%} }
+.tv-foot { background: #f9f9fb; padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mid); border-top: 1px solid rgba(0,0,0,0.06); }
+.firetv-pill { margin-left: auto; background: rgba(0,0,0,0.05); border-radius: 6px; padding: 3px 8px; font-size: 10px; font-weight: 500; color: var(--mid); }
+
+/* SECTIONS */
+section { padding: 120px 6%; }
+.section-center { text-align: center; max-width: 660px; margin: 0 auto; }
+.eyebrow { font-size: 13px; font-weight: 500; color: var(--mid); letter-spacing: 0.04em; text-transform: uppercase; display: block; margin-bottom: 16px; }
+h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; letter-spacing: -0.025em; margin-bottom: 20px; }
+.section-p { font-size: 19px; font-weight: 300; color: var(--mid); line-height: 1.55; max-width: 500px; margin: 0 auto; }
+
+/* STEPS */
+.steps-wrap { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; max-width: 980px; margin: 80px auto 0; background: rgba(0,0,0,0.06); border-radius: 22px; overflow: hidden; }
+.step-box { background: var(--white); padding: 44px 40px; transition: background .2s; }
+.step-box:hover { background: #fafafa; }
+.step-box:nth-child(2) { background: var(--page); }
+.step-num { font-size: 13px; font-weight: 500; color: var(--mid); margin-bottom: 20px; display: block; }
+.step-box h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 12px; }
+.step-box p { font-size: 15px; color: var(--mid); line-height: 1.6; }
+
+/* FEATURES GRID */
+.feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: rgba(0,0,0,0.06); border-radius: 22px; overflow: hidden; max-width: 980px; margin: 60px auto 0; }
+.feat-box { background: var(--white); padding: 48px 44px; }
+.feat-box.gray { background: var(--page); }
+.feat-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
+.feat-box h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 12px; }
+.feat-box p { font-size: 15px; color: var(--mid); line-height: 1.65; max-width: 340px; }
+
+/* TV DARK SECTION */
+.tv-section { background: var(--black); color: var(--white); }
+.tv-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; max-width: 1100px; margin: 0 auto; }
+.tv-section h2 { color: var(--white); }
+.tv-section .eyebrow { color: rgba(255,255,255,0.4); }
+.tv-section .section-p { color: rgba(255,255,255,0.5); max-width: none; }
+.tv-points { margin-top: 44px; display: flex; flex-direction: column; gap: 0; }
+.tv-point { padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.tv-point:first-child { padding-top: 0; }
+.tv-point:last-child { border-bottom: none; }
+.tv-point h4 { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+.tv-point p { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+
+/* Big TV */
+.big-tv-frame { background: #111; border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.08); box-shadow: 0 60px 120px rgba(0,0,0,0.6); aspect-ratio: 16/9; position: relative; }
+.big-tv-screen { width: 100%; height: 100%; position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.tv-glow-orb { position: absolute; width: 300px; height: 200px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,190,50,0.18), transparent 70%); animation: glowmove 4s ease-in-out infinite; }
+@keyframes glowmove { 0%,100%{transform:translate(-20%,10%) scale(1)} 50%{transform:translate(20%,-10%) scale(1.3)} }
+.big-tv-emoji { font-size: 72px; opacity: 0.18; position: relative; z-index: 1; }
+.big-tv-brand { position: absolute; top: 18px; right: 20px; font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.35); }
+.big-tv-qtag { position: absolute; top: 18px; left: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 6px; }
+.big-tv-bottom { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg,rgba(0,0,0,0.92),transparent); padding: 28px 24px 18px; }
+.big-tv-stand { width: 38%; height: 22px; background: #1a1a1a; margin: 0 auto; clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%); }
+.big-tv-base { width: 52%; height: 6px; background: #222; margin: 0 auto; border-radius: 0 0 4px 4px; }
+
+/* FAQ */
+.faq-wrap { max-width: 100%; margin: 60px 0 0; }
+.faq-item { border-top: 1px solid rgba(255,255,255,0.2); }
+.faq-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.faq-q { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; cursor: pointer; font-size: 17px; transition: color .15s; color: #1d1d1f; }
+.faq-q:hover { color: var(--blue); }
+.faq-chevron { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform .3s, background .2s; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); background: rgba(0,0,0,0.04); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.65; }
+.faq-item.open .faq-a { max-height: 300px; }
+.faq-a-in { padding-bottom: 22px; }
+
+/* CTA */
+.cta-section { background: #1a0a3d; text-align: center; padding: 40px 6%; }
+.cta-section h2 { margin-bottom: 18px; color: #fff; }
+.cta-section .eyebrow { color: rgba(255,255,255,0.55); }
+.cta-section .section-p { color: rgba(255,255,255,0.75); }
+.cta-meta { margin-top: 28px; font-size: 13px; color: rgba(255,255,255,0.6); display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.cta-meta span::before { content: "✓  "; }
+
+/* FOOTER */
+.footer-col h5 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #fff; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 14px; color: #fff; text-decoration: none; margin-bottom: 10px; transition: color .15s; }
+.footer-col a:hover { color: rgba(255,255,255,0.7); }
+.footer-brand p { font-size: 14px; color: #fff; max-width: 200px; line-height: 1.6; }
+.footer-bottom { display: none; }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
+
+/* RESPONSIVE */
+.hero-content { max-width: 60%; }
+
+@media (max-width: 860px) {
+  .steps-wrap, .feat-grid, .tv-inner { grid-template-columns: 1fr; }
+  .flow-arrow { display: none; }
+  .desc-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .hero-content { max-width: 100%; width: 100%; display: flex; flex-direction: column; }
+  .compat-row { order: 2; justify-content: center !important; margin-top: 56px !important; }
+  .hero-btns { order: 1; margin-top: 0 !important; }
+  .hero h1 { font-size: 26px; line-height: 1.25; max-width: 100%; }
+  .hero-sub { font-size: 15px; max-width: 100%; line-height: 1.5; margin-bottom: 4px !important; }
+  .hero { padding: 100px 6% 60px; }
+  .hero-mobile-img { display: block !important; }
+  .compat-label { width: 100%; display: block; margin-bottom: -4px; text-align: center; }
+  .hero-mobile-cta-img { display: block !important; }
+  .hero { overflow: visible !important; }
+  .cta-mobile-img { display: none !important; }
+  .cta-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .cta-grid-empty { display: none !important; }
+  .cta-grid h2 { font-size: 22px !important; line-height: 1.2 !important; white-space: nowrap !important; }
+  .cta-grid .section-p { font-size: 14px !important; max-width: 100% !important; }
+  .cta-section { text-align: left !important; clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%) !important; padding-top: 120px !important; padding-bottom: 80px !important; }
+  #how { margin-top: 0px !important; padding-top: 40px !important; }
+  .desc-section-mobile { clip-path: none !important; overflow: visible !important; padding-bottom: 150px !important; }
+  .desc-inner { padding-top: 60px !important; }
+  .available-on-row { margin-top: 48px !important; }
+  .mobile-spacer { display: block !important; }
+  .session-input-div { max-width: 100% !important; }
+  .hero-btns .btn-blue, .hero-btns .btn-outline { text-align: center; }
+  .hero { clip-path: polygon(0 0, 100% 0, 100% 97%, 0 100%) !important; }
+  .desc-mobile-img { display: block !important; }
+  .btn-blue, .btn-outline { text-align: center; }
+  #how { clip-path: none !important; padding-bottom: 60px !important; }
+  .flow-grid { grid-template-columns: 1fr !important; width: 100% !important; }
+  .flow-card { max-width: 100% !important; width: 100% !important; }
+  .phone-card { max-width: 100% !important; }
+  .tv-card { max-width: 100% !important; }
+  #how h2 { font-size: 28px !important; }
+  footer { grid-template-columns: 1fr 1fr !important; }
+  footer * { white-space: normal !important; }
+}
+
+/* Fluid image scaling — shrink with viewport */
+.hero-right-img {
+  width: auto !important;
+}
+.desc-overlay-img {
+  height: clamp(400px, 65vw, 1040px) !important;
+  width: clamp(400px, 65vw, 1040px) !important;
+}
+
+@media (max-width: 1500px) and (min-width: 900px) {
+  .compat-row { gap: 16px !important; }
+  .compat-row .yt-wrap img { height: 20px !important; }
+  .compat-row .yt-wrap span { font-size: 7px !important; }
+  .compat-row img[alt="Tubi"] { height: 24px !important; }
+  .compat-row img[alt="Pluto TV"] { height: 24px !important; }
+  .compat-row img[alt="Loop TV"] { height: 18px !important; }
+  .compat-row img[alt="Atmosphere TV"] { height: 13px !important; }
+}
+@media (max-width: 600px) {
+  .desc-overlay-img { display: none !important; }
+}
+
+/* ── TABLET (iPad portrait + landscape) ── */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .flow-grid { grid-template-columns: 1fr 1fr !important; width: 100% !important; gap: 16px 32px !important; }
+  .flow-card { max-width: 100% !important; }
+  .phone-card { max-width: 100% !important; }
+  .tv-card { max-width: 100% !important; }
+  #how { padding-left: 5% !important; padding-right: 5% !important; }
+  #how h2 { font-size: 32px !important; }
+  #how .flow-grid > div { padding: 16px 0 !important; }
+  #how .flow-grid > div > span { font-size: 20px !important; }
+  #how .flow-grid > div > p { font-size: 15px !important; }
+  .desc-section-mobile { padding-left: 5% !important; padding-right: 5% !important; }
+}
+
+/* iPad portrait only */
+@media (min-width: 601px) and (max-width: 860px) {
+  .flow-grid { grid-template-columns: 1fr !important; }
+  .hero h1 { font-size: 32px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero { padding: 100px 6% 60px !important; }
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo"><img src="images/9Z5lk3S.png" alt="" style="height:20px;display:block;">jukecast</a>
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#faq">FAQ</a>
+      <a href="mailto:support@jukecast.tv">Support</a>
+    </div>
+    <a href="login.html" class="nav-cta" style="border:1.5px solid rgba(255,255,255,1);border-radius:980px;padding:6px 18px;transition:border-color .2s,background .2s;">Login</a>
+  </div>
+</nav>
+
+<!-- HERO IMAGE - outside all wrappers to avoid clip-path clipping -->
+<img src="images/jPAf40m.png" alt="" id="hero-img" class="hero-right-img" style="position:absolute;width:auto;object-fit:contain;z-index:50;pointer-events:none;display:none;">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var img = document.getElementById('hero-img');
+  if (!img) return;
+  function position() {
+    var w = window.innerWidth;
+    if (w < 600) { img.style.display='none'; return; }
+    if (w < 1025) { img.style.display='none'; return; }
+    img.style.display='block';
+    if (false) {
+      var t = Math.min(1, Math.max(0, (w-1470)/(1920-1470)));
+      img.style.height = Math.round(510+(580-510)*t)+'px';
+      img.style.left   = Math.round(639+(845-639)*t)+'px';
+      img.style.top    = Math.round(58+(0-58)*t)+'px';
+    }
+  }
+  position();
+  window.addEventListener('resize', position);
+});
+</script>
+
+
+
+<!-- HERO + DESCRIPTION WRAPPER -->
+<div style="position:relative;">
+
+  <img src="images/I6YPUme.png" id="desc-img" alt="" class="desc-overlay-img" style="position:absolute;object-fit:contain;z-index:1500;pointer-events:none;display:none;-webkit-mask-image:linear-gradient(to right, black 70%, transparent 95%);mask-image:linear-gradient(to right, black 70%, transparent 95%);">
+<!-- HERO -->
+<div class="hero" style="position:relative;overflow:hidden;">
+  <div class="hero-orb" style="width:400px;height:400px;background:#7c3aed;top:-100px;left:-80px;"></div>
+  <div class="hero-orb" style="width:300px;height:300px;background:#2563eb;top:50px;right:100px;"></div>
+  <div class="hero-orb" style="width:250px;height:250px;background:#db2777;bottom:0px;left:40%;"></div>
+  <div class="hero-content" style="position:relative;z-index:3;">
+    <h1>Turn Your Smart TVs Into a Revenue Stream.</h1>
+    <p class="hero-sub">Let customers play music videos on your screens, then your regular broadcast automatically resumes after. You stay in control and earn passively.</p>
+    <div class="hero-mobile-cta-img" style="display:none;position:relative;left:50%;transform:translateX(-50%);width:115vw;margin:4px 0 8px;">
+      <img src="images/I6YPUme.png" alt="" style="width:100%;object-fit:cover;display:block;-webkit-mask-image:linear-gradient(to left, transparent 5%, black 25%);mask-image:linear-gradient(to left, transparent 5%, black 25%);">
+    </div>
+    <div class="compat-row" style="margin-bottom:24px;margin-top:-12px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+      <span class="compat-label" style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Compatible with:</span>
+      <span class="yt-wrap" style="display:inline-flex;align-items:center;gap:1px;line-height:1;">
+        <img src="images/LPftAaW.png" alt="YouTube TV" style="height:26px;filter:brightness(0) invert(1);opacity:0.6;">
+        <span style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.02em;text-transform:uppercase;line-height:1;margin-left:1px;">TV</span>
+      </span>
+      <img src="images/NIhpLZw.png" alt="Tubi" style="height:32px;filter:brightness(0) invert(1);opacity:0.6;">
+      <img src="images/sklqvDN.png" alt="Pluto TV" style="height:32px;filter:brightness(0) invert(1);opacity:0.6;">
+      <img src="images/vCX8Ds1.png" alt="Loop TV" style="height:24px;filter:brightness(0) invert(1);opacity:0.6;">
+      <img src="images/sXYzyvR.png" alt="Atmosphere TV" style="height:18px;filter:brightness(0) invert(1);opacity:0.6;">
+    </div>
+    <div style="height:20px;display:none;" class="mobile-spacer"></div>
+    <div class="hero-btns" style="margin-top:24px;">
+      <a href="login.html" class="btn-blue">Get Started for Free</a>
+      <div style="position:relative;">
+        <div class="session-input-div" style="display:flex;align-items:center;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.35);border-radius:980px;padding:0 6px 0 20px;height:48px;gap:8px;width:100%;max-width:280px;">
+          <input id="session-input" type="text" maxlength="6" placeholder="Enter Session ID" style="background:transparent;border:none;outline:none;color:#fff;font-family:var(--f);font-size:15px;flex:1;min-width:0;letter-spacing:0.08em;" oninput="onSessionInput(this)">
+          <button id="session-search-btn" onclick="searchSession()" disabled style="background:rgba(255,255,255,0.15);border:none;cursor:not-allowed;padding:6px 8px;border-radius:980px;display:flex;align-items:center;flex-shrink:0;transition:background .2s;opacity:0.4;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <p id="session-error" style="display:none;position:absolute;color:#f87171;font-size:12px;margin-top:4px;padding-left:16px;">Invalid session ID. Please try again.</p>
+      </div>
+      <script type="module">
+        window.onSessionInput = function onSessionInput(input) {
+          document.getElementById('session-error').style.display = 'none';
+          var btn = document.getElementById('session-search-btn');
+          if (input.value.length === 6) {
+            btn.disabled = false;
+            btn.style.cursor = 'pointer';
+            btn.style.opacity = '1';
+            btn.style.background = '#22c55e';
+          } else {
+            btn.disabled = true;
+            btn.style.cursor = 'not-allowed';
+            btn.style.opacity = '0.4';
+            btn.style.background = 'rgba(255,255,255,0.15)';
+          }
+        }
+        window.searchSession = function searchSession() {
+          var val = document.getElementById('session-input').value.trim();
+          if (val.length !== 6) return;
+          var btn = document.getElementById('session-search-btn');
+          var error = document.getElementById('session-error');
+          error.style.display = 'none';
+          btn.disabled = true;
+          btn.style.opacity = '0.4';
+
+          // Check Firebase for active session
+          import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js').then(function(m) {
+            var app;
+            try { app = m.getApp(); } catch(e) {
+              app = m.initializeApp({
+                apiKey: "AIzaSyDrhNvQ-7LqZVlxMfRE_q0oryaHGCJNiDU",
+                authDomain: "barplaymyp.firebaseapp.com",
+                databaseURL: "https://barplaymyp-default-rtdb.firebaseio.com",
+                projectId: "barplaymyp",
+              });
+            }
+            return import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js').then(function(db) {
+              return db.get(db.ref(db.getDatabase(app), 'sessions/' + val));
+            });
+          }).then(function(snap) {
+            if (snap.exists()) {
+              window.location.href = 'cast.html?session=' + val;
+            } else {
+              error.textContent = 'Session not found. Check the ID and try again.';
+              error.style.display = 'block';
+              btn.disabled = false;
+              btn.style.opacity = '1';
+            }
+          }).catch(function() {
+            // On network error, fall through to cast page anyway
+            window.location.href = 'cast.html?session=' + val;
+          });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('session-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchSession();
+          });
+        });
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- DESCRIPTION SECTION -->
+<div class="desc-section-mobile" style="padding: 40px 6% 80px; background: linear-gradient(180deg, #7a6cf5 0%, #5847ed 40%); position: relative; z-index: 5; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%); margin-top: -100px; padding-top: 110px; padding-bottom: 120px;">
+  <div class="desc-grid" style="display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;max-width:1200px;margin:0 auto;">
+    <div style="min-width:0;"></div>
+    <div></div>
+    <div class="desc-inner" style="display:flex;flex-direction:column;align-items:flex-start;min-width:0;">
+      <p style="font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1; margin-bottom: 32px; letter-spacing: -0.01em;">Free to install. No hidden fees.</p>
+      <p style="font-size: 19px; color: rgba(255,255,255,0.85); line-height: 1.8;">JukeCast runs quietly in the background of your smart TV, allowing guests to queue music videos and build playlists with friends and cast them directly to your screens. Your broadcasting automatically resumes afterward, so you never need to intervene. With built-in content moderation, you stay fully in charge while earning passive income from every interaction.</p>
+      <div class="available-on-row" style="margin-top:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:0.04em;text-transform:uppercase;">Available on</span>
+        <img src="images/7q5mS6k.png" alt="Android TV" style="height:18px;opacity:0.85;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.55);">and</span>
+        <img src="images/3jA6w4B.png" alt="Amazon Fire TV" style="height:22px;opacity:0.85;">
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end HERO + DESCRIPTION WRAPPER -->
+
+<!-- Mobile-only image section -->
+<div class="desc-mobile-img" style="display:none;margin-top:-40%;position:relative;z-index:10;background:linear-gradient(180deg, #5847ed 0%, var(--page) 100%);">
+  <img src="images/Pn3KNst.png" alt="" style="display:block;position:relative;left:50%;transform:translateX(-50%);width:115vw;object-fit:contain;">
+</div>
+
+<!-- FLOW + CTA WRAPPER -->
+<div style="background: #5847ed; position: relative;">
+
+<!-- FLOW SECTION -->
+<div id="how" style="padding: 60px 6% 180px; background: var(--page); position: relative; z-index: 999; margin-top: -100px; padding-top: 100px; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);">
+  <h2 style="font-size: 42px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 48px; color: #5947ed;">How Your Customers Use It</h2>
+
+  <div class="flow-grid" style="display:grid;grid-template-columns:420px 420px;gap:24px 60px;align-items:start;margin:0 auto;width:fit-content;">
+
+    <!-- Row 1: Text -->
+    <div style="padding:24px 0;">
+      <span style="font-size:26px;font-weight:600;color:var(--black);display:block;margin-bottom:10px;">1. Connect to the TV</span>
+      <p style="font-size:18px;color:var(--mid);line-height:1.65;">Customers scan a QR code or enter a session ID displayed by the venue to instantly connect their phone to the TV. No app download required.</p>
+    </div>
+
+    <!-- Row 1: Image -->
+    <div class="flow-card" style="padding:24px;text-align:center;">
+      <div style="width:200px;height:200px;margin:0 auto 10px;position:relative;overflow:hidden;border-radius:8px;">
+        <div class="qr-scan" style="z-index:2;"></div>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyAQAAAADAX2ykAAAC4ElEQVR4nO2cQW7cOBBFX40IZEndwEdR3yBHCuZm0lF8A3FpgMLPosiWjEzcE8TpSEDVoqFuvUUB5U8WP0mb+JVY/vklHIIPPvg/yhdrcStmLGbGMoLdAH9qkZ6TT/CfyCOtgyRJTKpoBpgkQdb9heTcfLb8g/8/fBMng+zbOshFDJsr2SV+e2I+wX8Wn45fygjLS0WUEcGGTetz8wn+z/LSay+5S/cv5xP87/FezH2RZOQKy9eamF4TLDZUyALKM/IJ/nN5pLU/Tuug//xoEf3V9fjUxAlAAS0vFchvxjJiohzVfb78g38QbX3kMm2C1ZxrF3auRy70ez0+v/laSHOu3j9DSdhtL61q/3rC/IP/KFymU9evpArk7mrMbnJU/Cn0ezE+AUM1ckXL1xV86VtS1WJDtenVENybrLPlH/yDaA5k75Vdq7tn6aXNFc3RP1+Qv/dX+Ajch+YKPlyvg47D9dnyD/5BdP3SdhV8Js4VppW+3eA9ddT3ejxNurQK7gsi307y7kvV/w6ivlfjj/4V9Ep7E+0xqCk59HtBnt5QtdK2aZbdmtzLHf3VNflBZiPYLb8ZlARud7CZQ8sI7n6cMv/gP+SL2a7aVtVcsRsgrZsR69/L8vcOSl7B4/mc+/poWon+6pp8m3rfx95QNWsjN88y6ntBPkv9/GS6n9oYZDc201wSUL7IhX3G/IP/IPr5jTL61q+BIWidlk3riJFXoKR6vvyDfxBtfD7YkPXw4hgxPl+Qfzf1ruBFbi/emdDhP1+U3+8vAEzrZpqzZDfaxoP5TPysfIL/ZP6+F5ilfqA9oX/HdknF7Sw3Ps6Yf/CP+HZ/oSQ0l4R9W3diM7OxO1knzT/4n8W7+wv5zZi0JUHFIFUtL8KgH4w+Xf7BP4jj0UnVPhZn3V2r1mRFf3Vh/ljGdTPNxdyEZrHE4WLhSfMP/qfxw/0F3Q9M+q99f3CK888X5C3+P0PwwV+W/w7SAEri+5vOfgAAAABJRU5ErkJggg==" width="200" height="200" style="display:block;border-radius:6px;opacity:0.35;">
+      </div>
+      <div style="font-size:12px;color:var(--blue);font-weight:500;">jukecast.tv</div>
+    </div>
+
+    <!-- Row 2: Text -->
+    <div style="padding:24px 0;">
+      <span style="font-size:26px;font-weight:600;color:var(--black);display:block;margin-bottom:10px;">2. Choose a video or create a playlist</span>
+      <p style="font-size:18px;color:var(--mid);line-height:1.65;">Browse available content and select a video, or create a playlist with friends to queue multiple videos they want to appear on the screen together.</p>
+    </div>
+
+    <!-- Row 2: Image -->
+    <div class="flow-card">
+      <div class="phone-top">
+        <span class="live-badge"><span class="live-dot"></span>Live</span>
+      </div>
+      <div class="phone-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search YouTube...
+      </div>
+      <div class="phone-results">
+        <div class="p-result">
+          <div class="p-thumb">🎸</div>
+          <div class="p-meta"><div class="p-title">Bohemian Rhapsody</div><div class="p-ch">Queen Official</div></div>
+          <div class="p-btn">▶ Play</div>
+        </div>
+        <div class="p-result">
+          <div class="p-thumb">🎵</div>
+          <div class="p-meta"><div class="p-title">Mr. Brightside</div><div class="p-ch">The Killers</div></div>
+          <div class="p-btn">+ Queue</div>
+        </div>
+        <div class="p-result">
+          <div class="p-thumb">🎤</div>
+          <div class="p-meta"><div class="p-title">Don't Stop Me Now</div><div class="p-ch">Queen Official</div></div>
+          <div class="p-btn">+ Queue</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Text -->
+    <div style="padding:24px 0;">
+      <span style="font-size:26px;font-weight:600;color:var(--black);display:block;margin-bottom:10px;">3. Pay and play</span>
+      <p style="font-size:18px;color:var(--mid);line-height:1.65;">Complete payment directly from their phone and see their selection instantly play on the TV. Their chosen content temporarily takes over the screen, then the venue's normal content automatically resumes afterward.</p>
+    </div>
+
+    <!-- Row 3: Image -->
+    <div class="flow-card">
+      <div class="tv-screen-sm">
+        <div class="tv-bg-emoji">🎸</div>
+        <div class="tv-warm"></div>
+        <div class="tv-brand-tag">JukeCast</div>
+        <div class="tv-q-tag">
+          <span style="width:5px;height:5px;background:#34c759;border-radius:50%;flex-shrink:0;animation:blink 2s infinite;"></span>
+          2 in queue
+        </div>
+        <div class="tv-now">
+          <div class="tv-now-ey">Now Playing</div>
+          <div class="tv-now-title">Bohemian Rhapsody</div>
+          <div class="tv-prog"><div class="tv-prog-fill"></div></div>
+        </div>
+      </div>
+      <div class="tv-foot">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Fullscreen · Ad-free
+        <span class="firetv-pill">Fire TV</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CTA -->
+<div class="cta-section" id="cta" style="position:relative;z-index:5;margin-top:-80px;clip-path:polygon(0 0, 100% 2%, 100% 100%, 0 100%);padding-top:120px;padding-bottom:80px;text-align:left;">
+
+  <div class="hero-orb" style="width:500px;height:500px;background:#7c3aed;top:-100px;left:-100px;"></div>
+  <div class="hero-orb" style="width:350px;height:350px;background:#2563eb;bottom:-80px;left:20%;"></div>
+  <div class="hero-orb" style="width:300px;height:300px;background:#db2777;top:20px;left:35%;"></div>
+
+  <div class="cta-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:1100px;margin:0 auto;position:relative;z-index:11;">
+    <div class="cta-grid-empty"></div>
+    <div>
+      <h2 style="font-size:42px;font-weight:600;letter-spacing:-0.02em;line-height:1.15;margin-bottom:12px;">Bring JukeCast to your venue.</h2>
+      <p class="section-p" style="margin:0;font-size:19px;font-weight:400;color:rgba(255,255,255,0.65);line-height:1.6;max-width:440px;">Setup takes less than 30 minutes and we provide 24 hour support.</p>
+      <div style="margin-top:32px;">
+        <a href="login.html" class="btn-blue">Get Started</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- end FLOW + CTA WRAPPER -->
+
+<!-- CTA IMAGE - outside all wrappers so nothing clips it -->
+<div id="cta-img-wrap" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;overflow:visible;">
+  <img src="images/Txx72bT.png" alt="" id="cta-img" style="position:absolute;width:759px;object-fit:contain;pointer-events:none;">
+</div>
+<script>
+  (function() {
+    function positionCtaImg() {
+      var cta = document.getElementById('cta');
+      var img = document.getElementById('cta-img');
+      if (!cta || !img) return;
+      img.style.left = '40px';
+      img.style.top = (cta.offsetTop + 979) + 'px';
+    }
+    window.addEventListener('load', positionCtaImg);
+    window.addEventListener('resize', positionCtaImg);
+  })();
+</script>
+<style>
+  @media (max-width: 860px) { #cta-img-wrap { display: none; } }
+  @media (max-width: 1100px) { #cta-img { width: clamp(300px, 45vw, 629px) !important; } }
+</style>
+
+
+<!-- FAQ -->
+<div style="padding: 60px 6% 100px; background: var(--white); position: relative; z-index: 1000; margin-top: 0;">
+  <h2 style="font-size: 42px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 56px; color: #5947ed;">FAQ</h2>
+
+  <div style="max-width:720px;display:flex;flex-direction:column;gap:40px;">
+
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">What types of videos can be played?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">Customers can play music videos, sports clips, live performances, and more using YouTube content. You remain in control with moderation and content settings.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">How long does setup take?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">Setup typically takes just a few minutes per TV. Once installed, it runs in the background with no ongoing effort required.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">Do I need new equipment to use JukeCast?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">No. JukeCast works with your existing smart TVs, Fire TV, or Android TV setup. We handle a simple one-time installation so you're ready to go.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">Do customers need to download an app?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">No. Customers simply scan a QR code and use their phone browser. There's nothing to download.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">Will this interrupt my normal TV content?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">Only temporarily. When a customer plays a video, it briefly takes over the screen, then your normal content automatically resumes afterward.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">Can I control what gets played?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">Yes. You can filter the type of content that plays, with built-in moderation tools to keep everything appropriate.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">How do I make money from this?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">Customers pay to play videos or playlists on your screens. You earn a portion of every transaction automatically.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">Do my staff need to manage anything?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">No. The entire system runs automatically. Customers control everything from their phone, and your staff doesn't need to be involved.</p>
+    </div>
+    <div>
+      <p style="font-size:18px;font-weight:600;color:var(--black);margin-bottom:8px;">What if I want to play my own content?</p>
+      <p style="font-size:16px;color:var(--mid);line-height:1.7;">You can display your own content at any time. JukeCast does not interfere with your normal setup and resumes your content automatically after each play.</p>
+    </div>
+
+  </div>
+</div>
+
+
+<footer style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;padding:60px 6% 48px;background:#2d2d2d;border-top:1px solid rgba(255,255,255,0.08);">
+  <div class="footer-col">
+    <h5>Product</h5>
+    <a href="#how">How It Works</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="footer-col">
+    <h5>Venues</h5>
+    <a href="#cta">Get JukeCast</a>
+    <a href="#">Setup Guide</a>
+  </div>
+  <div class="footer-col">
+    <h5>Contact</h5>
+    <a href="mailto:Support@jukecast.tv">Support@jukecast.tv</a>
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+<div style="background:#2d2d2d;padding:24px 6%;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <a href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <img src="images/9Z5lk3S.png" alt="" style="height:18px;display:block;">
+    <span style="font-size:22px;font-weight:300;letter-spacing:0.02em;color:#fff;font-family:'DM Sans','Helvetica Neue',sans-serif;">jukecast</span>
+  </a>
+  <span style="font-size:13px;color:rgba(255,255,255,0.4);">Copyright © 2026 JukeCast</span>
+</div>
+
+<script>
+function faq(el) {
+  const item = el.parentElement;
+  const was = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!was) item.classList.add('open');
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var img = document.getElementById('desc-img');
+  if (!img) return;
+  function position() {
+    var w = window.innerWidth;
+    if (w < 600) { img.style.display = 'none'; return; }
+    if (w < 1025) { img.style.display = 'none'; return; }
+    img.style.display = 'block';
+    img.style.bottom = 'auto';
+    if (false) {
+      img.style.width  = '700px';
+      img.style.height = '700px';
+      var t = Math.min(1, Math.max(0, (w - 1470) / (1920 - 1470)));
+      img.style.left = Math.round(-148 + (-41 - -148) * t) + 'px';
+      img.style.top  = Math.round(258  + (202  - 258)  * t) + 'px';
+    }
+  }
+  position();
+  window.addEventListener('resize', position);
+});
+</script>
+

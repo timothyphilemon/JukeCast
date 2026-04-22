@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dashboard — JukeCast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
+:root {
+  --page:   #f2f2f4;
+  --card:   #ffffff;
+  --black:  #111111;
+  --mid:    #6e6e73;
+  --light:  #e4e4e6;
+  --purple: #5847ed;
+  --purple-light: rgba(88,71,237,0.08);
+  --green:  #16a34a;
+  --green-bg: #f0fdf4;
+  --red:    #dc2626;
+  --red-bg: #fef2f2;
+  --f: 'Instrument Sans', sans-serif;
+}
+body {
+  font-family: var(--f);
+  background: var(--page);
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 56px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--light);
+}
+.nav-logo {
+  font-family: "DM Sans", sans-serif; font-size: 22px; font-weight: 300;
+  letter-spacing: 0.02em; color: var(--black); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-email { font-size: 13px; color: var(--mid); }
+.btn-logout {
+  font-family: var(--f); font-size: 13px; font-weight: 500;
+  color: var(--mid); background: none; border: 1px solid var(--light);
+  border-radius: 980px; padding: 6px 14px; cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.btn-logout:hover { color: var(--black); border-color: #999; }
+
+/* ── LAYOUT ── */
+.page-wrap {
+  max-width: 860px; margin: 0 auto; padding: 40px 20px 80px;
+}
+.page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.page-sub   { font-size: 14px; color: var(--mid); margin-bottom: 32px; }
+
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 32px; }
+.stat-card {
+  background: var(--card); border-radius: 16px; padding: 20px 22px;
+  border: 1px solid var(--light);
+}
+.stat-label { font-size: 11px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+.stat-value { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; color: var(--black); }
+.stat-value.green { color: var(--green); }
+
+/* ── SECTION ── */
+.section { margin-bottom: 28px; }
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title { font-size: 15px; font-weight: 700; color: var(--black); }
+.section-sub   { font-size: 13px; color: var(--mid); margin-top: 2px; }
+
+
+/* ── TV LIST ── */
+.tv-list { display: flex; flex-direction: column; gap: 10px; }
+.tv-card {
+  background: var(--card); border-radius: 14px; padding: 18px 20px;
+  border: 1px solid var(--light);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.tv-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--purple-light); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tv-info { flex: 1; min-width: 0; }
+.tv-name { font-size: 15px; font-weight: 600; color: var(--black); }
+.tv-session-id {
+  font-size: 20px; font-weight: 700; letter-spacing: 0.14em; color: var(--purple);
+  margin-top: 2px;
+}
+.tv-meta { font-size: 12px; color: var(--mid); margin-top: 4px; }
+.tv-actions { display: flex; gap: 8px; flex-shrink: 0; }
+/* ── CONNECTION STATUS ── */
+.tv-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; margin-top: 6px;
+}
+.tv-status.connected { color: #16a34a; }
+.tv-status.disconnected { color: #999; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.tv-status.connected .status-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+.tv-status.disconnected .status-dot { background: #ccc; }
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5); }
+  50%       { box-shadow: 0 0 0 4px rgba(22,163,74,0.1), 0 0 12px rgba(22,163,74,0.4); }
+}
+.tv-notice {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 10px; padding: 10px 14px; margin-top: 10px;
+  font-size: 12px; color: #92400e; line-height: 1.5;
+}
+.tv-notice-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #f59e0b; color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.btn-manage {
+  font-family: var(--f); font-size: 13px; font-weight: 500;
+  background: none; color: var(--mid); border: 1px solid var(--light);
+  border-radius: 980px; padding: 8px 14px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: border-color .15s, color .15s;
+}
+.btn-manage:hover { border-color: #999; color: var(--black); }
+.btn-cast {
+  font-family: var(--f); font-size: 13px; font-weight: 600;
+  background: var(--purple); color: #fff; border: none; border-radius: 980px;
+  padding: 8px 16px; cursor: pointer; transition: background .15s;
+}
+.btn-cast:hover { background: #4636d4; }
+/* ── CONNECTION STATUS ── */
+.tv-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; margin-top: 6px;
+}
+.tv-status.connected { color: #16a34a; }
+.tv-status.disconnected { color: #999; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.tv-status.connected .status-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+.tv-status.disconnected .status-dot { background: #ccc; }
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5); }
+  50%       { box-shadow: 0 0 0 4px rgba(22,163,74,0.1), 0 0 12px rgba(22,163,74,0.4); }
+}
+.tv-notice {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 10px; padding: 10px 14px; margin-top: 10px;
+  font-size: 12px; color: #92400e; line-height: 1.5;
+}
+.tv-notice-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #f59e0b; color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.btn-manage {
+  font-family: var(--f); font-size: 13px; font-weight: 500;
+  background: none; color: var(--mid); border: 1px solid var(--light);
+  border-radius: 980px; padding: 8px 16px; cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.btn-manage:hover { border-color: #999; color: var(--black); }
+.tv-empty {
+  background: var(--card); border-radius: 14px; padding: 40px 24px;
+  border: 1.5px dashed var(--light); text-align: center;
+}
+.tv-empty p { font-size: 14px; color: var(--mid); margin-bottom: 16px; }
+
+/* ── ADD TV BUTTON ── */
+.btn-add-tv {
+  font-family: var(--f); font-size: 14px; font-weight: 600;
+  background: var(--purple); color: #fff; border: none; border-radius: 980px;
+  padding: 10px 20px; cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-add-tv:hover { background: #4636d4; }
+
+/* ── ADD TV MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--card); border-radius: 20px; padding: 32px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  transform: scale(0.96); transition: transform .2s;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.open .modal { transform: scale(1); }
+.modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.modal p  { font-size: 14px; color: var(--mid); margin-bottom: 24px; }
+.modal label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.modal input {
+  font-family: var(--f); font-size: 15px; width: 100%; padding: 13px 14px;
+  border: 1.5px solid var(--light); border-radius: 12px; outline: none;
+  color: var(--black); background: var(--page);
+  transition: border-color .2s, box-shadow .2s; margin-bottom: 20px;
+}
+.modal input:focus {
+  border-color: var(--purple); background: #fff;
+  box-shadow: 0 0 0 3px rgba(88,71,237,0.1);
+}
+.modal-actions { display: flex; gap: 10px; }
+.btn-cancel {
+  flex: 1; font-family: var(--f); font-size: 15px; font-weight: 600;
+  background: var(--page); color: var(--mid); border: 1px solid var(--light);
+  border-radius: 980px; padding: 13px; cursor: pointer; transition: background .15s;
+}
+.btn-cancel:hover { background: var(--light); }
+.btn-create {
+  flex: 1; font-family: var(--f); font-size: 15px; font-weight: 600;
+  background: var(--purple); color: #fff; border: none; border-radius: 980px;
+  padding: 13px; cursor: pointer; transition: background .15s; position: relative;
+}
+.btn-create:hover { background: #4636d4; }
+.btn-create:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── MANAGE PANEL ── */
+.manage-panel {
+  background: var(--page); border-radius: 12px; padding: 18px;
+  margin-top: 10px; border: 1px solid var(--light); display: none;
+}
+.manage-panel.open { display: block; }
+.manage-section-title { font-size: 12px; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+.manage-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.manage-row label { font-size: 13px; font-weight: 600; color: var(--black); width: 110px; flex-shrink: 0; }
+.manage-row select, .manage-row input {
+  flex: 1; font-family: var(--f); font-size: 13px; padding: 9px 12px;
+  border: 1px solid var(--light); border-radius: 8px; background: var(--card);
+  color: var(--black); outline: none;
+}
+.manage-row select:focus, .manage-row input:focus { border-color: var(--purple); }
+.btn-save-settings {
+  font-family: var(--f); font-size: 13px; font-weight: 600;
+  background: var(--purple); color: #fff; border: none; border-radius: 980px;
+  padding: 8px 18px; cursor: pointer; margin-top: 4px; transition: background .15s;
+}
+.btn-save-settings:hover { background: #4636d4; }
+.saved-badge {
+  font-size: 12px; color: var(--green); font-weight: 600; margin-left: 8px;
+  opacity: 0; transition: opacity .2s;
+}
+.saved-badge.show { opacity: 1; }
+.btn-delete-tv {
+  font-family: var(--f); font-size: 13px; font-weight: 500;
+  background: none; color: var(--red); border: 1px solid #fecaca;
+  border-radius: 980px; padding: 7px 14px; cursor: pointer;
+  margin-top: 12px; transition: background .15s;
+}
+.btn-delete-tv:hover { background: var(--red-bg); }
+
+/* ── SUCCESS TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--black); color: #fff; font-size: 14px; font-weight: 500;
+  padding: 12px 22px; border-radius: 980px;
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+  z-index: 9999; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .stats-row .stat-card:last-child { grid-column: span 2; }
+  .tv-card { flex-wrap: wrap; }
+  .tv-actions { width: 100%; }
+  .btn-cast, /* ── CONNECTION STATUS ── */
+.tv-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; margin-top: 6px;
+}
+.tv-status.connected { color: #16a34a; }
+.tv-status.disconnected { color: #999; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.tv-status.connected .status-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+.tv-status.disconnected .status-dot { background: #ccc; }
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(22,163,74,0.2), 0 0 6px rgba(22,163,74,0.5); }
+  50%       { box-shadow: 0 0 0 4px rgba(22,163,74,0.1), 0 0 12px rgba(22,163,74,0.4); }
+}
+.tv-notice {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 10px; padding: 10px 14px; margin-top: 10px;
+  font-size: 12px; color: #92400e; line-height: 1.5;
+}
+.tv-notice-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #f59e0b; color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.btn-manage { flex: 1; text-align: center; justify-content: center; }
+  .btn-add-tv { font-size: 13px; padding: 8px 14px; white-space: nowrap; }
+  .btn-add-tv svg { flex-shrink: 0; }
+  .section-header { align-items: center; }
+  .manage-row { flex-direction: column; gap: 6px; }
+  .manage-row label { width: auto; }
+  .manage-row select, .manage-row input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="admin.html" class="nav-logo">
+    <img src="images/8NBch2A.png" alt="" style="height:20px;display:block;">
+    jukecast
+  </a>
+  <div class="nav-right">
+    <button class="btn-logout" onclick="handleLogout()">Log Out</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <h1 class="page-title" id="pageTitle">Venue Dashboard</h1>
+  <p class="page-sub" id="pageSub">Manage your JukeCast setup</p>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Today's Earnings</div>
+      <div class="stat-value green" id="statEarnings">$0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">TVs Active</div>
+      <div class="stat-value" id="statTVs">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Casts</div>
+      <div class="stat-value" id="statCasts">—</div>
+    </div>
+  </div>
+
+  <!-- YOUR TVs -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Your TVs</div>
+        <div class="section-sub">Each TV has its own session ID for customers to use — <a href="install.html" style="color:var(--purple);text-decoration:none;font-weight:500;">installation guide</a></div>
+      </div>
+      <button class="btn-add-tv" onclick="openAddModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add TV
+      </button>
+    </div>
+    <div class="tv-list" id="tvList">
+      <div class="tv-empty" id="tvEmpty">
+        <p>No TVs added yet. Add your first TV and start earning.</p>
+        <button class="btn-add-tv" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add TV
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD TV MODAL -->
+<div class="modal-overlay" id="addModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <h2>Add a TV</h2>
+
+    <label for="tvNameInput">TV Name</label>
+    <input type="text" id="tvNameInput" placeholder='e.g. "Bar Left" or "Patio Screen"' maxlength="40">
+
+    <label for="tvSessionInput">Session ID</label>
+    <input type="text" id="tvSessionInput" inputmode="numeric" maxlength="6" placeholder="e.g. 483920 — leave blank to auto-generate" autocomplete="off">
+
+    <label for="modalReturnApp">Return App</label>
+    <select id="modalReturnApp" onchange="handleModalReturnAppChange()">
+      <option value="">Select an app...</option>
+      <option value="tv.pluto.android">Pluto TV</option>
+      <option value="com.tubitv">Tubi</option>
+      <option value="tv.atmosphere.atmospheretv">Atmosphere TV</option>
+      <option value="com.looptv.android">Loop TV</option>
+      <option value="com.amazon.firetv.youtube">YouTube</option>
+      <option value="custom">Custom...</option>
+    </select>
+    <div id="modalCustomPkgRow" style="display:none;">
+      <input type="text" id="modalCustomPkg" placeholder="e.g. tv.atmosphere.atmospheretv" style="margin-top:8px;">
+    </div>
+
+    <label for="modalTvIp">TV IP Address</label>
+    <input type="text" id="modalTvIp" placeholder="192.168.1.xxx">
+
+    <label for="modalCastPriceInput">Cast Price</label>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="position:relative;flex:1;">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:#6e6e73;pointer-events:none;">$</span>
+        <input type="number" id="modalCastPriceInput" placeholder="0.00" min="0" step="0.50"
+               style="padding-left:28px;" oninput="handleModalPriceInput()">
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:#111;cursor:pointer;white-space:nowrap;margin-bottom:0;">
+        <input type="checkbox" id="modalFreeCheck" onchange="handleModalFreeCheck()" checked
+               style="width:16px;height:16px;cursor:pointer;accent-color:#5847ed;">
+        Free
+      </label>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-create" id="createTvBtn" onclick="handleAddTV()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  // ─── PASTE YOUR FIREBASE CONFIG HERE ────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDrhNvQ-7LqZVlxMfRE_q0oryaHGCJNiDU",
+    authDomain:        "barplaymyp.firebaseapp.com",
+    databaseURL:       "https://barplaymyp-default-rtdb.firebaseio.com",
+    projectId:         "barplaymyp",
+    storageBucket:     "barplaymyp.firebasestorage.app",
+    messagingSenderId: "1071259901423",
+    appId:             "1:1071259901423:web:fbe7a0257a5ac6ad15aa1a",
+  }
+  // ────────────────────────────────────────────────────────────────────────────
+
+  // ─── UPDATE THIS to wherever your customer casting app is deployed ──────────
+  // e.g. 'https://app.jukecast.tv' or '/cast' or wherever your React app lives
+  const CAST_APP_BASE_URL = '/cast'
+  // ────────────────────────────────────────────────────────────────────────────
+
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'
+  import { getAuth, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'
+  import { getDatabase, ref, set, remove, onValue, get }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js'
+
+  const RETURN_APPS = [
+    { label: 'Select an app...', pkg: '' },
+    { label: 'Pluto TV',         pkg: 'tv.pluto.android' },
+    { label: 'Tubi',             pkg: 'com.tubitv' },
+    { label: 'Atmosphere TV',    pkg: 'tv.atmosphere.atmospheretv' },
+    { label: 'Loop TV',          pkg: 'com.looptv.android' },
+    { label: 'YouTube',          pkg: 'com.amazon.firetv.youtube' },
+    { label: 'Custom...',        pkg: 'custom' },
+  ]
+
+  const fbApp = initializeApp(firebaseConfig)
+  const auth  = getAuth(fbApp)
+  const db    = getDatabase(fbApp)
+
+  let currentUser = null
+  let tvUnsub     = null
+
+  // ── AUTH GUARD ──
+  onAuthStateChanged(auth, user => {
+    if (!user) { window.location.href = 'login.html'; return }
+    currentUser = user
+    loadTVs()
+  })
+
+  // ── LOAD TVs ──
+  function loadTVs() {
+    if (tvUnsub) tvUnsub()
+    const tvsRef = ref(db, `venues/${currentUser.uid}/tvs`)
+    tvUnsub = onValue(tvsRef, snap => {
+      const val = snap.val()
+      renderTVs(val ? Object.entries(val).map(([id, data]) => ({ id, ...data })) : [])
+    })
+  }
+
+  function renderTVs(tvs) {
+    const list  = document.getElementById('tvList')
+    const empty = document.getElementById('tvEmpty')
+    document.getElementById('statTVs').textContent = tvs.length || '0'
+
+    // Always clear existing cards first
+
+    if (tvs.length === 0) { empty.style.display = ''; return }
+    empty.style.display = 'none'
+    empty.style.display = 'none'
+
+
+    tvs.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).forEach(tv => {
+      const wrap = document.createElement('div')
+      wrap.className = 'tv-card-wrap'
+      wrap.dataset.tvId = tv.id
+
+      const returnOpts = RETURN_APPS.map(a =>
+        `<option value="${a.pkg}" ${tv.returnApp === a.pkg ? 'selected' : ''}>${a.label}</option>`
+      ).join('')
+
+      const isCustom = tv.returnApp && !RETURN_APPS.find(a => a.pkg === tv.returnApp)
+
+      wrap.innerHTML = `
+        <div class="tv-card">
+          <div class="tv-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5847ed" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="tv-info">
+            <div class="tv-name">${escHtml(tv.name || 'Unnamed TV')}</div>
+            <div class="tv-session-id">${tv.id}</div>
+            <div class="tv-meta">Added ${tv.createdAt ? formatDate(tv.createdAt) : 'recently'}</div>
+            <div class="tv-status disconnected" id="tvStatus-${tv.id}">
+              <span class="status-dot"></span>
+              <span class="status-text">Not connected</span>
+            </div>
+          </div>
+          <div class="tv-actions">
+            <button class="btn-cast" onclick="castToTV('${tv.id}')">Cast</button>
+            <button class="btn-manage" onclick="toggleManage('${tv.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.34.07-.69.07-1.08s-.03-.74-.07-1.08l2.32-1.82c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.24-.42-.32-.66-.24l-2.74 1.1c-.57-.44-1.18-.79-1.85-1.06L14.16 2.4c-.04-.26-.26-.4-.5-.4h-4.4c-.24 0-.46.14-.5.4L8.37 5.09C7.7 5.36 7.09 5.71 6.52 6.15L3.78 5.05c-.24-.09-.53 0-.66.24L.92 9.1c-.14.24-.08.54.13.7l2.32 1.82c-.04.34-.07.69-.07 1.08s.03.74.07 1.08L1.05 15.6c-.21.16-.27.46-.13.7l2.2 3.81c.13.24.42.32.66.24l2.74-1.1c.57.44 1.18.79 1.85 1.06l.39 2.69c.04.26.26.4.5.4h4.4c.24 0 .46-.14.5-.4l.39-2.69c.67-.27 1.28-.62 1.85-1.06l2.74 1.1c.24.09.53 0 .66-.24l2.2-3.81c.14-.24.08-.54-.13-.7l-2.32-1.82z"/></svg>
+              Configure
+            </button>
+          </div>
+        </div>
+        <div class="manage-panel" id="manage-${tv.id}">
+          <div class="manage-section-title">Settings</div>
+
+          <div class="manage-row">
+            <label>Return App</label>
+            <select id="returnApp-${tv.id}" onchange="handleReturnAppChange('${tv.id}')">${returnOpts}</select>
+          </div>
+          <p style="font-size:12px;color:#888;margin:-4px 0 12px 110px;">After videos finish, JukeCast returns to this app.</p>
+
+          <div class="manage-row" id="customPkgRow-${tv.id}" style="display:${isCustom ? 'flex' : 'none'}">
+            <label>Package</label>
+            <input type="text" id="customPkg-${tv.id}" value="${escHtml(isCustom ? tv.returnApp : '')}" placeholder="e.g. tv.atmosphere.atmospheretv">
+          </div>
+
+          <div class="manage-row">
+            <label>TV IP Address</label>
+            <input type="text" id="tvIp-${tv.id}" value="${escHtml(tv.tvIpAddress || '')}" placeholder="192.168.1.xxx">
+          </div>
+          <p style="font-size:12px;color:#888;margin:-4px 0 14px 110px;">Fire TV → Settings → My Fire TV → About → Network</p>
+
+          <div class="manage-row">
+            <label>Cast Price</label>
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <div style="position:relative;flex:1;">
+                <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#6e6e73;pointer-events:none;">$</span>
+                <input type="number" id="castPrice-${tv.id}" placeholder="0.00" min="0" step="0.50"
+                       value="${(!tv.castPrice || tv.castPrice === 'free') ? '' : tv.castPrice}"
+                       style="padding-left:24px;" oninput="handleCastPriceInput('${tv.id}')">
+              </div>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#111;cursor:pointer;white-space:nowrap;margin-bottom:0;">
+                <input type="checkbox" id="castFreeCheck-${tv.id}" onchange="handleCastFreeCheck('${tv.id}')"
+                       ${(!tv.castPrice || tv.castPrice === 'free') ? 'checked' : ''}
+                       style="width:15px;height:15px;cursor:pointer;accent-color:#5847ed;">
+                Free
+              </label>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="btn-save-settings" onclick="saveSettings('${tv.id}')">Save Settings</button>
+            <span class="saved-badge" id="savedBadge-${tv.id}">✓ Saved</span>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="btn-delete-tv" onclick="deleteTV('${tv.id}', '${escHtml(tv.name || 'this TV')}')">Remove TV</button>
+          </div>
+          <div class="tv-notice" id="tvNotice-${tv.id}">
+            <div class="tv-notice-icon">!</div>
+            <span>Download JukeCast on this TV and enter the session ID <strong>${tv.id}</strong> to get connected.</span>
+          </div>
+        </div>
+      `
+      list.appendChild(wrap)
+
+      // Listen to tvConnected presence for this TV
+      onValue(ref(db, `sessions/${tv.id}/tvConnected`), snap => {
+        const isConnected = snap.exists() && snap.val() === true
+        const statusEl    = document.getElementById(`tvStatus-${tv.id}`)
+        const noticeEl    = document.getElementById(`tvNotice-${tv.id}`)
+        if (!statusEl) return
+        if (isConnected) {
+          statusEl.className = 'tv-status connected'
+          statusEl.querySelector('.status-text').textContent = 'Connected'
+          if (noticeEl) noticeEl.style.display = 'none'
+        } else {
+          statusEl.className = 'tv-status disconnected'
+          statusEl.querySelector('.status-text').textContent = 'Not connected'
+          if (noticeEl) noticeEl.style.display = 'flex'
+        }
+      })
+    })
+  }
+
+  // ── ADD TV ──
+  function generateSessionId() {
+    return String(Math.floor(100000 + Math.random() * 900000))
+  }
+
+  window.handleAddTV = async function() {
+    const name            = document.getElementById('tvNameInput').value.trim()
+    const customSessionId = document.getElementById('tvSessionInput').value.trim()
+
+    if (!name) { document.getElementById('tvNameInput').focus(); return }
+
+    // Validate custom session ID if provided
+    if (customSessionId && !/^\d{6}$/.test(customSessionId)) {
+      document.getElementById('tvSessionInput').focus()
+      alert('Session ID must be exactly 6 digits.')
+      return
+    }
+
+    const btn = document.getElementById('createTvBtn')
+    btn.disabled = true; btn.textContent = 'Creating...'
+
+    try {
+      let sessionId = customSessionId || generateSessionId()
+
+      // Check for collision
+      if (!customSessionId) {
+        let attempts = 0
+        while (attempts < 5) {
+          const snap = await get(ref(db, `sessions/${sessionId}`))
+          if (!snap.exists()) break
+          sessionId = generateSessionId()
+          attempts++
+        }
+      } else {
+        const snap = await get(ref(db, `sessions/${sessionId}`))
+        if (snap.exists()) {
+          btn.disabled = false; btn.textContent = 'Create TV'
+          alert(`Session ID ${sessionId} is already in use. Choose a different one.`)
+          return
+        }
+      }
+
+      const returnAppVal  = document.getElementById('modalReturnApp').value
+      const returnApp     = returnAppVal === 'custom' ? document.getElementById('modalCustomPkg').value.trim() : returnAppVal
+      const tvIpAddress   = document.getElementById('modalTvIp').value.trim()
+      const isFree    = document.getElementById('modalFreeCheck').checked
+      const castPrice = isFree ? 'free' : (document.getElementById('modalCastPriceInput').value || 'free')
+
+      const tvData = {
+        name,
+        sessionId,
+        createdAt:   Date.now(),
+        returnApp:   returnApp || '',
+        tvIpAddress: tvIpAddress || '',
+        castPrice:   castPrice || 'free',
+      }
+
+      // Save under venue's TV list using sessionId as the key
+      await set(ref(db, `venues/${currentUser.uid}/tvs/${sessionId}`), tvData)
+      // Sync settings to session node so TV app picks them up
+      if (returnApp) await set(ref(db, `sessions/${sessionId}/settings/returnApp`), returnApp)
+      if (tvIpAddress) await set(ref(db, `sessions/${sessionId}/settings/tvIpAddress`), tvIpAddress)
+      if (castPrice && castPrice !== 'free') await set(ref(db, `sessions/${sessionId}/settings/castPrice`), castPrice)
+
+      // Initialize the session node
+      await set(ref(db, `sessions/${sessionId}/meta`), {
+        venueId:   currentUser.uid,
+        tvName:    name,
+        createdAt: Date.now(),
+      })
+
+      closeAddModal()
+      showToast(`TV "${name}" added — session ID ${sessionId}`)
+    } catch (e) {
+      console.error('Failed to add TV:', e)
+      btn.disabled    = false
+      btn.textContent = 'Create TV'
+      alert('Something went wrong. Please try again.')
+    }
+  }
+
+  // ── MANAGE ──
+  window.handleModalReturnAppChange = function() {
+    const val = document.getElementById('modalReturnApp').value
+    document.getElementById('modalCustomPkgRow').style.display = val === 'custom' ? 'block' : 'none'
+  }
+
+  window.handleModalFreeCheck = function() {
+    const free  = document.getElementById('modalFreeCheck').checked
+    const input = document.getElementById('modalCastPriceInput')
+    input.disabled = free
+    input.style.opacity = free ? '0.4' : '1'
+    if (free) input.value = ''
+  }
+
+  window.handleModalPriceInput = function() {
+    const input = document.getElementById('modalCastPriceInput')
+    const check = document.getElementById('modalFreeCheck')
+    if (input.value) check.checked = false
+  }
+
+  window.handleCastPriceInput = function(tvId) {
+    const input = document.getElementById('castPrice-' + tvId)
+    const check = document.getElementById('castFreeCheck-' + tvId)
+    if (input.value) check.checked = false
+  }
+
+  window.handleCastFreeCheck = function(tvId) {
+    const free  = document.getElementById('castFreeCheck-' + tvId).checked
+    const input = document.getElementById('castPrice-' + tvId)
+    input.disabled = free
+    input.style.opacity = free ? '0.4' : '1'
+    if (free) input.value = ''
+  }
+
+  window.toggleManage = function(tvId) {
+    const panel = document.getElementById('manage-' + tvId)
+    panel.classList.toggle('open')
+  }
+
+  window.handleCastPriceChange = function(tvId) {
+    const val = document.getElementById('castPrice-' + tvId).value
+    document.getElementById('customPriceRow-' + tvId).style.display = val === 'custom' ? 'flex' : 'none'
+  }
+
+  window.handleReturnAppChange = function(tvId) {
+    const select = document.getElementById(`returnApp-${tvId}`)
+    const customRow = document.getElementById(`customPkgRow-${tvId}`)
+    customRow.style.display = select.value === 'custom' ? 'flex' : 'none'
+  }
+
+  window.saveSettings = async function(tvId) {
+    const selectVal   = document.getElementById(`returnApp-${tvId}`).value
+    const customPkg   = document.getElementById(`customPkg-${tvId}`)?.value.trim() || ''
+    const returnApp   = selectVal === 'custom' ? customPkg : selectVal
+    const tvIpAddress = document.getElementById(`tvIp-${tvId}`).value.trim()
+    const isFree    = document.getElementById(`castFreeCheck-${tvId}`).checked
+    const castPrice = isFree ? 'free' : (document.getElementById(`castPrice-${tvId}`)?.value || 'free')
+    try {
+      await set(ref(db, `venues/${currentUser.uid}/tvs/${tvId}/returnApp`),   returnApp)
+      await set(ref(db, `venues/${currentUser.uid}/tvs/${tvId}/tvIpAddress`), tvIpAddress)
+      await set(ref(db, `venues/${currentUser.uid}/tvs/${tvId}/castPrice`),   castPrice)
+      // Also sync to session settings so the TV app picks it up
+      await set(ref(db, `sessions/${tvId}/settings/returnApp`),   returnApp)
+      await set(ref(db, `sessions/${tvId}/settings/tvIpAddress`), tvIpAddress)
+      await set(ref(db, `sessions/${tvId}/settings/castPrice`),   castPrice)
+      const badge = document.getElementById(`savedBadge-${tvId}`)
+      badge.classList.add('show')
+      setTimeout(() => badge.classList.remove('show'), 2500)
+    } catch (e) { console.error('Failed to save settings:', e) }
+  }
+
+  window.deleteTV = async function(tvId, tvName) {
+    if (!confirm(`Remove "${tvName}"? This will disconnect the session.`)) return
+    try {
+      await remove(ref(db, `venues/${currentUser.uid}/tvs/${tvId}`))
+      // Leave sessions/${tvId} intact so nothing crashes on the TV
+      showToast(`"${tvName}" removed`)
+    } catch (e) { console.error('Failed to delete TV:', e) }
+  }
+
+
+  window.castToTV = function(tvId) {
+    window.location.href = `${CAST_APP_BASE_URL}?session=${tvId}`
+  }
+
+  // ── LOGOUT ──
+  window.handleLogout = async function() {
+    await signOut(auth)
+    window.location.href = 'login.html'
+  }
+
+  // ── MODAL ──
+  window.openAddModal = function() {
+    document.getElementById('tvNameInput').value = ''
+    document.getElementById('tvSessionInput').value = ''
+    document.getElementById('modalReturnApp').value = ''
+    document.getElementById('modalCustomPkgRow').style.display = 'none'
+    document.getElementById('modalCustomPkg').value = ''
+    document.getElementById('modalTvIp').value = ''
+    document.getElementById('modalCastPriceInput').value = ''
+    document.getElementById('modalCastPriceInput').disabled = true
+    document.getElementById('modalCastPriceInput').style.opacity = '0.4'
+    document.getElementById('modalFreeCheck').checked = true
+    const btn = document.getElementById('createTvBtn')
+    btn.disabled = false; btn.textContent = 'Create TV'
+    document.getElementById('addModal').classList.add('open')
+    setTimeout(() => document.getElementById('tvNameInput').focus(), 150)
+  }
+  window.closeAddModal = function() {
+    document.getElementById('addModal').classList.remove('open')
+  }
+  window.closeModalOnOverlay = function(e) {
+    if (e.target === document.getElementById('addModal')) closeAddModal()
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast')
+    t.textContent = msg; t.classList.add('show')
+    setTimeout(() => t.classList.remove('show'), 3000)
+  }
+
+  // ── HELPERS ──
+  function escHtml(str) {
+    return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))
+  }
+  function formatDate(ts) {
+    return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  // Keyboard shortcut: Escape closes modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAddModal()
+  })
+</script>
+
+</body>
+</html>
