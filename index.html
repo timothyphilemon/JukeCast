@@ -236,6 +236,7 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 }
 @media (max-width: 600px) {
   .nav-links { display: none; }
+  .control-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .hero-content { max-width: 100%; width: 100%; display: flex; flex-direction: column; }
   .compat-row { order: 2; justify-content: center !important; margin-top: 56px !important; }
   .hero-btns { order: 1; margin-top: 0 !important; }
@@ -837,6 +838,65 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 
 </div>
 
+<!-- ALWAYS IN CONTROL -->
+<div style="padding: 80px 6% 160px; background: var(--white); position: relative; z-index: 6; margin-top: -100px; padding-top: 100px; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);">
+
+  <div class="control-grid" style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+
+    <!-- Left: copy -->
+    <div>
+      <span style="font-size:13px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:#5847ed;display:block;margin-bottom:16px;">Venue Controls</span>
+      <h2 style="font-size:42px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:20px;color:var(--black);">Always in control.</h2>
+      <p style="font-size:18px;color:var(--mid);line-height:1.7;max-width:420px;">Set your preferences once and trust the system to keep your venue exactly how you want it.</p>
+    </div>
+
+    <!-- Right: checklist -->
+    <div style="display:flex;flex-direction:column;gap:0;background:var(--page);border-radius:20px;overflow:hidden;border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 24px rgba(0,0,0,0.05);">
+
+      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+        <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span style="font-size:16px;font-weight:500;color:var(--black);">Only allow music videos</span>
+      </div>
+
+      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+        <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span style="font-size:16px;font-weight:500;color:var(--black);">Turn on pre-approval for every video</span>
+      </div>
+
+      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+        <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span style="font-size:16px;font-weight:500;color:var(--black);">Block explicit or inappropriate content</span>
+      </div>
+
+      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+        <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span style="font-size:16px;font-weight:500;color:var(--black);">Set a price per play — you control the rate</span>
+      </div>
+
+
+
+
+      <div style="padding:16px 24px;display:flex;align-items:center;gap:14px;">
+        <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span style="font-size:16px;font-weight:500;color:var(--black);">Set quiet hours — no plays after a certain time</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 <!-- CTA -->
 <div class="cta-section" id="cta" style="position:relative;z-index:5;margin-top:-80px;clip-path:polygon(0 0, 100% 2%, 100% 100%, 0 100%);padding-top:120px;padding-bottom:80px;text-align:center;">
 
@@ -860,7 +920,7 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 
 
 <!-- FAQ -->
-<div style="padding: 60px 6% 100px; background: var(--white); position: relative; z-index: 1000; margin-top: 0;">
+<div id="faq" style="padding: 60px 6% 100px; background: var(--white); position: relative; z-index: 1000; margin-top: 0;">
   <h2 style="font-size: 42px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 56px; color: #5947ed;">FAQ</h2>
 
   <div style="max-width:720px;display:flex;flex-direction:column;gap:40px;margin:0 auto;">
