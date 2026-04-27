@@ -236,7 +236,10 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 }
 @media (max-width: 600px) {
   .nav-links { display: none; }
-  .control-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .control-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .control-grid h2 { font-size: 28px !important; }
+  .control-grid p { font-size: 16px !important; }
+  .control-section { padding: 60px 6% 120px !important; }
   .hero-content { max-width: 100%; width: 100%; display: flex; flex-direction: column; }
   .compat-row { order: 2; justify-content: center !important; margin-top: 56px !important; }
   .hero-btns { order: 1; margin-top: 0 !important; }
@@ -839,7 +842,7 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 </div>
 
 <!-- ALWAYS IN CONTROL -->
-<div style="padding: 80px 6% 160px; background: var(--white); position: relative; z-index: 6; margin-top: -100px; padding-top: 100px; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);">
+<div class="control-section" style="padding: 80px 6% 160px; background: var(--white); position: relative; z-index: 6; margin-top: -100px; padding-top: 100px; clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);">
 
   <div class="control-grid" style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
 
@@ -853,28 +856,28 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
     <!-- Right: checklist -->
     <div style="display:flex;flex-direction:column;gap:0;background:var(--page);border-radius:20px;overflow:hidden;border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 24px rgba(0,0,0,0.05);">
 
-      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+      <div class="checklist-item" style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
         <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         <span style="font-size:16px;font-weight:500;color:var(--black);">Only allow music videos</span>
       </div>
 
-      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+      <div class="checklist-item" style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
         <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         <span style="font-size:16px;font-weight:500;color:var(--black);">Turn on pre-approval for every video</span>
       </div>
 
-      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+      <div class="checklist-item" style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
         <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         <span style="font-size:16px;font-weight:500;color:var(--black);">Block explicit or inappropriate content</span>
       </div>
 
-      <div style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
+      <div class="checklist-item" style="padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;">
         <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
@@ -884,7 +887,7 @@ h2 { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; line-height: 1.06; l
 
 
 
-      <div style="padding:16px 24px;display:flex;align-items:center;gap:14px;">
+      <div class="checklist-item" style="padding:16px 24px;display:flex;align-items:center;gap:14px;">
         <span style="width:22px;height:22px;background:#5847ed;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
